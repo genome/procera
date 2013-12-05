@@ -1,3 +1,4 @@
 #! /bin/bash
 
+source env.sh
 PERL5LIB=t:$PERL5LIB prove -r -v t $@
