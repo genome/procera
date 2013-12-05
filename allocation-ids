@@ -1,7 +1,0 @@
-original test reference: 6aa7fea6271d4f7fa640c99fe790d272
-reference fasta only: b5ebe5f324db49b1a3f9ae585eafd6e5
-normal bam: 8c89370a0be34c679a864d84b16b452f
-tumor bam: bc1285135b9d47f797b20e746eb57ee6
-
-cleaned tumor bam: 08e6665985e04fb196fd142ba01b997f
-cleaned normal bam: ae7d9972a09e4ef7896b1e0afa291b6b

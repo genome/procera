@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<manifest>
-    <file tag="x" path="x-path" kilobytes='1' />
-    <file tag="y" path="y-path" kilobytes='10' />
-    <file tag="z" path="z-path" kilobytes='100' />
-</manifest>

@@ -1,7 +1,0 @@
-unaligned_bam	gms:///data/bc1285135b9d47f797b20e746eb57ee6?tag=bam
-reference_fasta	gms:///data/b5ebe5f324db49b1a3f9ae585eafd6e5?tag=fa
-Paired.aln_first_reads.threads	4
-Paired.aln_second_reads.threads	4
-Paired.aln_first_reads.trimming_quality_threshold	5
-Paired.aln_second_reads.trimming_quality_threshold	5
-Paired.Sampe.max_insert_size	500

@@ -1,7 +1,0 @@
-Standard.Paired.Sampe.max_insert_size	500
-Standard.Paired.aln_first_reads.threads	4
-Standard.Paired.aln_first_reads.trimming_quality_threshold	5
-Standard.Paired.aln_second_reads.threads	4
-Standard.Paired.aln_second_reads.trimming_quality_threshold	5
-reference_fasta	gms:///data/b5ebe5f324db49b1a3f9ae585eafd6e5?tag=fa
-unaligned_bams	gms:///data/ae7d9972a09e4ef7896b1e0afa291b6b?tag=bam	gms:///data/08e6665985e04fb196fd142ba01b997f?tag=bam
