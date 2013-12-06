@@ -1,5 +1,5 @@
 package HasParam;
-use Tool;
+use Procera::Tool;
 use warnings FATAL => 'all';
 
 has_param 'p1';

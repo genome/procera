@@ -10,8 +10,8 @@ use File::Temp qw();
 use JSON qw();
 use Test::More;
 
-use Compiler;
-use Runner;
+use Procera::Compiler;
+use Procera::Runner;
 
 sub run_system_test {
     my $test_file = shift;
@@ -35,7 +35,7 @@ sub compile {
     my $old_gms_path = $ENV{GMSPATH};
     $ENV{GMSPATH} = File::Spec->join($test_dir, 'definitions');
 
-    my $cmd = Compiler->new(
+    my $cmd = Procera::Compiler->new(
         'input-file' => source_file($test_dir),
         'output-directory' => $output_directory,
     );
@@ -56,7 +56,8 @@ sub run {
     my ($test_dir, $output_directory) = @_;
     unshift @INC, File::Spec->join($test_dir, 'perl');
 
-    my $runner = Runner->new(workflow => workflow_xml($output_directory),
+    my $runner = Procera::Runner->new(
+        workflow => workflow_xml($output_directory),
         inputs => inputs($test_dir, $output_directory));
 
     ok($runner, 'instantiated runner') || die;

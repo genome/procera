@@ -1,0 +1,92 @@
+start: process_definition eof
+        { $return = $item[1]; }
+    | <error>
+
+process_definition: node(s)
+        { $return = Procera::Compiler::AST::Node::Process->new(
+                alias => 'root',
+                source_path => $root_source_path, # defined in a startup_action
+                nodes => $item[1] );
+        }
+    | <error>
+
+node: alias(?) type parallel_by ',' coupler_statements
+        { $return = Procera::Compiler::AST::NodeFactory::new_node(
+                alias => $item[1][0] || '',
+                source_path => $item[2],
+                parallel => $item[3],
+                couplers => $item[5],
+            );
+        }
+    | alias(?) type coupler_statements
+        { $return = Procera::Compiler::AST::NodeFactory::new_node(
+                alias => $item[1][0] || '',
+                source_path => $item[2],
+                couplers => $item[3],
+            );
+        }
+    | alias(?) type parallel_by(?)
+        { $return = Procera::Compiler::AST::NodeFactory::new_node(
+                alias => $item[1][0] || '',
+                source_path => $item[2],
+                parallel => $item[3][0],
+                couplers => [],
+            );
+        }
+    | <error>
+
+alias: name "is"
+        { $return = $item[1]; }
+    | <error>
+
+parallel_by: "parallel by" name
+    { $return = $item[2]; }
+
+coupler_statements: coupler(s /,/)
+
+coupler: internal_statement
+    | input_statement
+    | output_statement
+    | constant_statement
+    | <error>
+
+internal_statement: name "from" identifier
+        { $return = Procera::Compiler::AST::Coupler::Internal->new(
+                name => $item[1],
+                source_node_alias => $item[3]->[0],
+                source_name => $item[3]->[1],
+            );
+        }
+
+identifier: name "." name
+        { $return = [$item[1], $item[3]] }
+    | type "." name
+        { $return = [$item[1], $item[3]] }
+    | <error>
+
+input_statement: name "from" io_specifier
+        { $return = Procera::Compiler::AST::Coupler::Input->new(
+                name => $item[1], input_name => $item[3]); }
+
+io_specifier: "@" name
+        { $return = $item[2]; }
+
+output_statement: name "to" io_specifier
+        { $return = Procera::Compiler::AST::Coupler::Output->new(
+                name => $item[1], output_name => $item[3]); }
+
+constant_statement: name "=" constant
+        { $return = Procera::Compiler::AST::Coupler::Constant->new(
+                name => $item[1], value => $item[3]); }
+
+constant: /'(\\'|.)*'/
+        { $return = substr $item[1], 1, -1; }
+    | /-?[0-9][0-9_]*(.[0-9_]+)?/
+        { $return = $item[1]; }
+    | <error>
+
+
+name: /[a-z][A-Za-z0-9_]*/
+type: /[A-Z][A-Za-z0-9_]*(::[A-Z][A-Za-z0-9_]*)*/
+
+eof: /^\Z/

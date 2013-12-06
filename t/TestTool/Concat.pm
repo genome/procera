@@ -1,5 +1,5 @@
 package TestTool::Concat;
-use Tool;
+use Procera::Tool;
 use warnings FATAL => 'all';
 
 has_input 'prefix';

@@ -1,5 +1,5 @@
 package Y;
-use Tool;
+use Procera::Tool;
 use warnings FATAL => 'all';
 
 has_input 'y_in_1';

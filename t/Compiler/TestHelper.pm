@@ -11,7 +11,7 @@ use File::Basename qw();
 
 use Genome::Utility::Test qw(compare_ok);
 
-use Compiler;
+use Procera::Compiler;
 
 
 sub source_file {
@@ -32,7 +32,7 @@ sub compile {
     my $old_gms_path = $ENV{GMSPATH};
     $ENV{GMSPATH} = File::Spec->join($test_dir, 'definitions');
 
-    my $cmd = Compiler->new(
+    my $cmd = Procera::Compiler->new(
         'input-file' => source_file($test_dir),
         'output-directory' => $output_directory,
     );
