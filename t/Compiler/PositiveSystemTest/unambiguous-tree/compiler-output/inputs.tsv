@@ -1,9 +1,9 @@
 A._process
 A._step_label	A
 A.test_name
-B._process
-B._step_label	B
-B.test_name
+BTest._process
+BTest._step_label	BTest
+BTest.test_name
 C.D._process
 C.D._step_label	C.D
 C.D.test_name

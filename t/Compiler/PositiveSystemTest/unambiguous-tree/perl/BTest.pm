@@ -1,4 +1,4 @@
-package B;
+package BTest;
 use Procera::Tool;
 use warnings FATAL => 'all';
 
