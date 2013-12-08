@@ -12,4 +12,4 @@ done
 
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
-export PERL5LIB="$DIR/perl:$PERL5LIB"
+export PERL5LIB="$DIR/lib:$PERL5LIB"
