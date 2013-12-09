@@ -37,7 +37,7 @@ sub execute {
     }
 
     my $process = Amber::Factory::Process::new();
-    $logger->info('Launching Process ', $process->hyphenated_id,
+    $logger->info('Launching Process ', $process->normalized_id,
         ' (', $process->log_directory, ')');
 
     my $inputs_file = $self->inputs_file($process);
