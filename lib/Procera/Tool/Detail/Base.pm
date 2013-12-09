@@ -5,8 +5,6 @@ use warnings FATAL => 'all';
 use Amber::Factory::ManifestAllocation;
 use Amber::Manifest::Writer;
 use Amber::ProcessStep;
-use Amber::Result::Input;
-use Amber::Result::Output;
 use Amber::Result;
 use Amber::Translator;
 use File::Path qw();
@@ -138,9 +136,9 @@ sub _property_names {
 sub _set_outputs_from_result {
     my ($self, $result) = @_;
 
-    for my $output ($result->outputs) {
-        my $name = $output->name;
-        $self->$name($output->value_id);
+    my $result_outputs = $result->outputs;
+    for my $output_name (keys %$result_outputs) {
+        $self->$output_name($result_outputs->{$output_name});
     }
 
     return;
@@ -327,17 +325,13 @@ sub _create_checkpoint {
         owner => $self->_process);
 
     for my $input_name ($self->_non_contextual_input_names) {
-        my $input = Amber::Result::Input->create(name => $input_name,
-            value_class_name => 'UR::Value',
-            value_id => $self->_raw_inputs->{$input_name},
-            result_id => $result->id);
+        $result->add_input(name => $input_name,
+            value => $self->_raw_inputs->{$input_name});
     }
 
     for my $output_name ($self->outputs) {
-        Amber::Result::Output->create(name => $output_name,
-            value_class_name => 'UR::Value',
-            value_id => $self->$output_name,
-            result_id => $result->id);
+        $result->add_output(name => $output_name,
+            value => $self->$output_name);
     }
 
     $result->update_lookup_hash;

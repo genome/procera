@@ -1,1 +1,1 @@
-requires 'Amber', '0.000001001';
+requires 'Amber', '0.000001002';
