@@ -11,5 +11,9 @@ has save => (
     default => sub {1},
 );
 
+has array => (
+    is => 'ro',
+    isa => 'Bool',
+);
 
 1;
