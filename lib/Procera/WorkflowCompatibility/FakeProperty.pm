@@ -7,7 +7,7 @@ has 'property_name' => (
     is => 'ro',
     required => 1,
 );
-has 'is_many' => (
+has 'is_array' => (
     is => 'ro',
     isa => 'Bool',
 );
@@ -16,7 +16,10 @@ has 'is_many' => (
 sub is_input {}
 sub is_output {}
 sub is_param {}
-
+sub is_many {
+    my $self = shift;
+    return $self->is_array;
+}
 
 sub id_by { [] }
 

@@ -6,4 +6,8 @@ extends 'Procera::WorkflowCompatibility::FakeProperty';
 
 sub is_output { 1; }
 
+sub is_many {
+    return;
+}
+
 __PACKAGE__->meta->make_immutable;

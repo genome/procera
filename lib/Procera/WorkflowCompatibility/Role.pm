@@ -35,7 +35,7 @@ sub _input_properties {
     my @result;
     for my $attr_name ($class->inputs) {
         push @result, Procera::WorkflowCompatibility::FakeProperty::Input->new(
-            is_many => $class->meta->find_attribute_by_name($attr_name)->array,
+            is_array => $class->meta->find_attribute_by_name($attr_name)->array,
             property_name => $attr_name);
     }
 
@@ -47,6 +47,7 @@ sub _output_properties {
     my @result;
     for my $attr_name ($class->outputs) {
         push @result, Procera::WorkflowCompatibility::FakeProperty::Output->new(
+            is_array => $class->meta->find_attribute_by_name($attr_name)->array,
             property_name => $attr_name);
     }
 
