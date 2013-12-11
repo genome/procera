@@ -29,7 +29,6 @@ has links => (
 sub BUILD {
     my $self = shift;
 
-    $self->uuid("cluster_" . $self->_new_uuid);
     $self->_set_missing_aliases;
 
     $self->_set_constants;
@@ -90,86 +89,6 @@ sub dag {
     return $dag;
 }
 Memoize::memoize('dag');
-
-sub dot_nodes {
-    my $self = shift;
-
-    my @result;
-    # input_connector
-    push @result, sprintf('%s [label="@"];', $self->_new_uuid);
-
-    for my $node (@{$self->nodes}) {
-        push @result, @{$node->dot_nodes};
-    }
-
-    # output_connector
-    push @result, sprintf('%s [label="@"];', $self->_new_uuid);
-
-    return \@result;
-}
-Memoize::memoize('dot_nodes');
-
-sub dot_links {
-    my $self = shift;
-
-    my @result;
-    for my $node (@{$self->nodes}) {
-        push @result, @{$node->dot_links};
-    }
-
-    for my $link (@{$self->links}) {
-        my ($source_idx, $destination_idx) = (-1, 0);
-        $source_idx = 0 if $link->source->node == $self;
-        $destination_idx = -1 if $link->destination->node == $self;
-
-        my $source_id = id_from_dot_node(
-            @{$link->source->node->dot_nodes}[$source_idx]
-        );
-        my $destination_id = id_from_dot_node(
-            @{$link->destination->node->dot_nodes}[$destination_idx]
-        );
-        push @result, sprintf('%s -> %s;', $source_id, $destination_id);
-    }
-    return \@result;
-}
-
-sub id_from_dot_node {
-    my $dot_node = shift;
-    return (split(/\s/, $dot_node))[0];
-}
-
-sub dot_cluster {
-    my $self = shift;
-
-    my @sub_clusters;
-    for my $node (@{$self->nodes}) {
-        push @sub_clusters, $node->dot_cluster if $node->dot_cluster;
-    }
-
-    my @node_ids;
-    for my $dot_node (@{$self->dot_nodes}) {
-        push @node_ids, id_from_dot_node($dot_node);
-    }
-
-    my $sub_clusters = join('; ', @sub_clusters) . ';' if @sub_clusters;
-    my $node_ids = join('; ', @node_ids) . ';' if @node_ids;
-    return sprintf('subgraph "cluster_%s" {label="%s"; %s %s}',
-        $self->uuid,
-        $self->alias,
-        $sub_clusters || '',
-        $node_ids || '',
-    );
-}
-
-sub dot {
-    my $self = shift;
-
-    return sprintf("digraph G {\n%s\n%s\n%s\n}\n",
-        join("\n", @{$self->dot_nodes}),
-        join("\n", Set::Scalar->new(@{$self->dot_links})->members),
-        join("\n", $self->dot_cluster),
-    );
-}
 
 sub _set_constants {
     my $self = shift;
