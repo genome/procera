@@ -20,7 +20,7 @@ sub output {
     return $self->_create_data_end_point(name => 'output');
 }
 
-sub input {
+sub next_input {
     my $self = shift;
 
     $self->num_inputs($self->num_inputs + 1);

@@ -189,9 +189,10 @@ sub _link_to_converge_node {
 
     for my $source (@{$sources}) {
         my $source_end_point = $self->_end_point_from_source($source);
+        my $converge_end_point = $converge_node->next_input();
         $self->_link(
             source => $source_end_point,
-            destination => $converge_node->input,
+            destination => $converge_end_point,
         );
     }
 }
