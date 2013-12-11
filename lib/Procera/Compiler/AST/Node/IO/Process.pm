@@ -1,4 +1,4 @@
-package Procera::Compiler::AST::Node::Process;
+package Procera::Compiler::AST::Node::IO::Process;
 
 use Moose;
 use warnings FATAL => 'all';
@@ -10,14 +10,14 @@ use Set::Scalar;
 use Memoize;
 use Genome;
 
-use Procera::Compiler::AST::Node::Tool;
+use Procera::Compiler::AST::Node::IO::Tool;
 use Procera::Compiler::AST::Link;
 
-extends 'Procera::Compiler::AST::Node';
+extends 'Procera::Compiler::AST::Node::IO';
 
 has nodes => (
     is => 'ro',
-    isa => 'ArrayRef[Procera::Compiler::AST::Node::Process|Procera::Compiler::AST::Node::Tool]',
+    isa => 'ArrayRef[Procera::Compiler::AST::Node::IO]',
     required => 1,
 );
 has links => (

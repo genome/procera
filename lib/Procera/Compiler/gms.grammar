@@ -3,7 +3,7 @@ start: process_definition eof
     | <error>
 
 process_definition: node(s)
-        { $return = Procera::Compiler::AST::Node::Process->new(
+        { $return = Procera::Compiler::AST::Node::IO::Process->new(
                 alias => 'root',
                 source_path => $root_source_path, # defined in a startup_action
                 nodes => $item[1] );

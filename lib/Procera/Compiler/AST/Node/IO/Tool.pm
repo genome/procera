@@ -1,4 +1,4 @@
-package Procera::Compiler::AST::Node::Tool;
+package Procera::Compiler::AST::Node::IO::Tool;
 
 use Moose;
 use warnings FATAL => 'all';
@@ -7,9 +7,7 @@ use Carp qw(confess);
 use Memoize;
 use Genome;
 
-use Procera::Compiler::AST::Node;
-
-extends 'Procera::Compiler::AST::Node';
+extends 'Procera::Compiler::AST::Node::IO';
 
 sub BUILD {
     my $self = shift;

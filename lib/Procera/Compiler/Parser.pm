@@ -11,7 +11,7 @@ use File::Slurp qw();
 
 use Parse::RecDescent qw();
 use Procera::Compiler::AST::NodeFactory;
-use Procera::Compiler::AST::Node::Process;
+use Procera::Compiler::AST::Node::IO::Process;
 use Procera::Compiler::AST::Coupler::Input;
 use Procera::Compiler::AST::Coupler::Output;
 use Procera::Compiler::AST::Coupler::Internal;

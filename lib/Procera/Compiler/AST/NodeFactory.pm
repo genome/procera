@@ -8,8 +8,8 @@ use Carp qw(confess);
 use File::Spec qw();
 
 use Procera::Compiler::Parser;
-use Procera::Compiler::AST::Node::Process;
-use Procera::Compiler::AST::Node::Tool;
+use Procera::Compiler::AST::Node::IO::Process;
+use Procera::Compiler::AST::Node::IO::Tool;
 
 use Readonly qw();
 
@@ -34,7 +34,7 @@ sub new_node {
         $process->couplers($params{couplers}) if defined $params{couplers};
         return $process;
     } else {
-        return Procera::Compiler::AST::Node::Tool->new(%params);
+        return Procera::Compiler::AST::Node::IO::Tool->new(%params);
     }
 }
 
