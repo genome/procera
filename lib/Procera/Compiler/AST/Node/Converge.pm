@@ -13,6 +13,11 @@ has num_inputs => (
     isa => 'Int',
     default => 0,
 );
+has target_name => (
+    is => 'ro',
+    isa => 'Str',
+    required => 1,
+);
 
 sub output {
     my $self = shift;
@@ -33,7 +38,7 @@ sub dag {
     my $self = shift;
 
     return Genome::WorkflowBuilder::Converge->create(
-        name => "Converge",
+        name => sprintf("Converge to %s", $self->target_name),
     );
 }
 Memoize::memoize('dag');

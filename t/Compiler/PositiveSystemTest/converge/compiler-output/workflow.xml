@@ -18,7 +18,7 @@
       <outputproperty>combination</outputproperty>
     </operationtype>
   </operation>
-  <operation name="Converge">
+  <operation name="Converge to ConcatArray.input_array">
     <operationtype typeClass="Workflow::OperationType::Converge">
       <inputproperty>input_00001</inputproperty>
       <inputproperty>input_00002</inputproperty>
@@ -27,11 +27,11 @@
     </operationtype>
   </operation>
   <link fromOperation="ConcatArray" fromProperty="combination" toOperation="output connector" toProperty="combination" />
-  <link fromOperation="Converge" fromProperty="output" toOperation="ConcatArray" toProperty="input_array" />
+  <link fromOperation="Converge to ConcatArray.input_array" fromProperty="output" toOperation="ConcatArray" toProperty="input_array" />
   <link fromOperation="input connector" fromProperty="ConcatArray._process" toOperation="ConcatArray" toProperty="_process" />
   <link fromOperation="input connector" fromProperty="ConcatArray._step_label" toOperation="ConcatArray" toProperty="_step_label" />
   <link fromOperation="input connector" fromProperty="ConcatArray.test_name" toOperation="ConcatArray" toProperty="test_name" />
-  <link fromOperation="input connector" fromProperty="item1" toOperation="Converge" toProperty="input_00001" />
-  <link fromOperation="input connector" fromProperty="item3" toOperation="Converge" toProperty="input_00003" />
-  <link fromOperation="input connector" fromProperty="middle_item" toOperation="Converge" toProperty="input_00002" />
+  <link fromOperation="input connector" fromProperty="item1" toOperation="Converge to ConcatArray.input_array" toProperty="input_00001" />
+  <link fromOperation="input connector" fromProperty="item3" toOperation="Converge to ConcatArray.input_array" toProperty="input_00003" />
+  <link fromOperation="input connector" fromProperty="middle_item" toOperation="Converge to ConcatArray.input_array" toProperty="input_00002" />
 </operation>

@@ -166,7 +166,8 @@ sub _make_converge_links {
     for my $destination_node (@{$self->nodes}) {
         for my $coupler ($destination_node->converge_couplers) {
             my $destination_end_point = $destination_node->inputs->{$coupler->name};
-            my $converge_node = $self->_add_converge_node();
+            my $converge_node = $self->_add_converge_node(
+                $destination_end_point->full_name);
             $self->_link(source => $converge_node->output,
                 destination => $destination_end_point);
             $self->_link_to_converge_node($converge_node, $coupler->sources);
@@ -176,8 +177,10 @@ sub _make_converge_links {
 
 sub _add_converge_node {
     my $self = shift;
+    my $target_name = shift;
 
-    my $node = Procera::Compiler::AST::Node::Converge->new();
+    my $node = Procera::Compiler::AST::Node::Converge->new(
+        target_name => $target_name);
     push @{$self->converge_nodes}, $node;
     return $node;
 }

@@ -14,4 +14,10 @@ has 'name' => (
     required => 1,
 );
 
+sub full_name {
+    my $self = shift;
+
+    return sprintf("%s.%s", $self->node->alias, $self->name);
+}
+
 1;

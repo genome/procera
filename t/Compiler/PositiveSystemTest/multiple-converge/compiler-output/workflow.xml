@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<operation name="root">
+  <operationtype typeClass="Workflow::OperationType::Model">
+    <inputproperty>concat_1._process</inputproperty>
+    <inputproperty>concat_1._step_label</inputproperty>
+    <inputproperty>concat_1.test_name</inputproperty>
+    <inputproperty>concat_2._process</inputproperty>
+    <inputproperty>concat_2._step_label</inputproperty>
+    <inputproperty>concat_2.test_name</inputproperty>
+    <inputproperty>item1</inputproperty>
+    <inputproperty>itemi2</inputproperty>
+    <outputproperty>combination_1</outputproperty>
+    <outputproperty>combination_2</outputproperty>
+  </operationtype>
+  <operation name="Converge to concat_1.input_array">
+    <operationtype typeClass="Workflow::OperationType::Converge">
+      <inputproperty>input_00001</inputproperty>
+      <outputproperty>output</outputproperty>
+    </operationtype>
+  </operation>
+  <operation name="Converge to concat_2.input_array">
+    <operationtype typeClass="Workflow::OperationType::Converge">
+      <inputproperty>input_00001</inputproperty>
+      <outputproperty>output</outputproperty>
+    </operationtype>
+  </operation>
+  <operation name="concat_1">
+    <operationtype typeClass="Workflow::OperationType::Command" commandClass="TestTool::ConcatArray">
+      <inputproperty>_process</inputproperty>
+      <inputproperty>_step_label</inputproperty>
+      <inputproperty>input_array</inputproperty>
+      <inputproperty>test_name</inputproperty>
+      <outputproperty>combination</outputproperty>
+    </operationtype>
+  </operation>
+  <operation name="concat_2">
+    <operationtype typeClass="Workflow::OperationType::Command" commandClass="TestTool::ConcatArray">
+      <inputproperty>_process</inputproperty>
+      <inputproperty>_step_label</inputproperty>
+      <inputproperty>input_array</inputproperty>
+      <inputproperty>test_name</inputproperty>
+      <outputproperty>combination</outputproperty>
+    </operationtype>
+  </operation>
+  <link fromOperation="Converge to concat_1.input_array" fromProperty="output" toOperation="concat_1" toProperty="input_array" />
+  <link fromOperation="Converge to concat_2.input_array" fromProperty="output" toOperation="concat_2" toProperty="input_array" />
+  <link fromOperation="concat_1" fromProperty="combination" toOperation="output connector" toProperty="combination_1" />
+  <link fromOperation="concat_2" fromProperty="combination" toOperation="output connector" toProperty="combination_2" />
+  <link fromOperation="input connector" fromProperty="item1" toOperation="Converge to concat_1.input_array" toProperty="input_00001" />
+  <link fromOperation="input connector" fromProperty="itemi2" toOperation="Converge to concat_2.input_array" toProperty="input_00001" />
+  <link fromOperation="input connector" fromProperty="concat_1._process" toOperation="concat_1" toProperty="_process" />
+  <link fromOperation="input connector" fromProperty="concat_1._step_label" toOperation="concat_1" toProperty="_step_label" />
+  <link fromOperation="input connector" fromProperty="concat_1.test_name" toOperation="concat_1" toProperty="test_name" />
+  <link fromOperation="input connector" fromProperty="concat_2._process" toOperation="concat_2" toProperty="_process" />
+  <link fromOperation="input connector" fromProperty="concat_2._step_label" toOperation="concat_2" toProperty="_step_label" />
+  <link fromOperation="input connector" fromProperty="concat_2.test_name" toOperation="concat_2" toProperty="test_name" />
+</operation>
