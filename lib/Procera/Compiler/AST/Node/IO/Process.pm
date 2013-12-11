@@ -11,6 +11,7 @@ use Memoize;
 use Genome;
 
 use Procera::Compiler::AST::Node::IO::Tool;
+use Procera::Compiler::AST::Node::Converge;
 use Procera::Compiler::AST::Link;
 
 extends 'Procera::Compiler::AST::Node::IO';
@@ -19,6 +20,11 @@ has nodes => (
     is => 'ro',
     isa => 'ArrayRef[Procera::Compiler::AST::Node::IO]',
     required => 1,
+);
+has converge_nodes => (
+    is => 'rw',
+    isa => 'ArrayRef[Procera::Compiler::AST::Node::Converge]',
+    default => sub {[]},
 );
 has links => (
     is => 'rw',
@@ -37,6 +43,7 @@ sub BUILD {
     $self->_make_explicit_inputs;
     $self->_make_explicit_outputs;
     $self->_make_explicit_links;
+    $self->_make_converge_links;
     return;
 }
 
@@ -60,7 +67,7 @@ sub dag {
         parallel_by => $self->parallel,
     );
 
-    for my $node (@{$self->nodes}) {
+    for my $node (@{$self->nodes}, @{$self->converge_nodes}) {
         $dag->add_operation($node->dag);
     }
 
@@ -152,6 +159,56 @@ sub _make_explicit_links {
     }
     push @{$self->links}, @links;
 }
+
+sub _make_converge_links {
+    my $self = shift;
+
+    for my $destination_node (@{$self->nodes}) {
+        for my $coupler ($destination_node->converge_couplers) {
+            my $destination_end_point = $destination_node->inputs->{$coupler->name};
+            my $converge_node = $self->_add_converge_node();
+            $self->_link(source => $converge_node->output,
+                destination => $destination_end_point);
+            $self->_link_to_converge_node($converge_node, $coupler->sources);
+        }
+    }
+}
+
+sub _add_converge_node {
+    my $self = shift;
+
+    my $node = Procera::Compiler::AST::Node::Converge->new();
+    push @{$self->converge_nodes}, $node;
+    return $node;
+}
+
+sub _link_to_converge_node {
+    my $self = shift;
+    my $converge_node = shift;
+    my $sources = shift;
+
+    for my $source (@{$sources}) {
+        my $source_end_point = $self->_end_point_from_source($source);
+        $self->_link(
+            source => $source_end_point,
+            destination => $converge_node->input,
+        );
+    }
+}
+
+sub _end_point_from_source {
+    my $self = shift;
+    my $source = shift;
+
+    if (ref $source eq 'ARRAY') {
+        my ($source_node_alias, $source_name) = @{$source};
+        my $source_node = $self->_node_aliased($source_node_alias);
+        return $source_node->outputs->{$source_name};
+    } else {
+        return $self->_find_or_add_input($source);
+    }
+}
+
 
 sub _make_explicit_inputs {
     my $self = shift;

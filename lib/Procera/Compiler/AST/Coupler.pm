@@ -15,5 +15,6 @@ sub is_internal { confess 'Abstract method'; }
 sub is_input { confess 'Abstract method'; }
 sub is_output { confess 'Abstract method'; }
 sub is_constant { confess 'Abstract method'; }
+sub is_converge { confess 'Abstract method'; }
 
 1;

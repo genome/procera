@@ -44,11 +44,22 @@ parallel_by: "parallel by" name
 
 coupler_statements: coupler(s /,/)
 
-coupler: internal_statement
+coupler: converge_statement
+    | internal_statement
     | input_statement
     | output_statement
     | constant_statement
     | <error>
+
+converge_statement: name "from" "[" source(s /,/) "]"
+        { $return = Procera::Compiler::AST::Coupler::Converge->new(
+                name => $item[1],
+                sources => $item[4],
+            );
+        }
+
+source: identifier
+    | io_specifier
 
 internal_statement: name "from" identifier
         { $return = Procera::Compiler::AST::Coupler::Internal->new(

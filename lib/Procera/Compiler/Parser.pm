@@ -16,6 +16,7 @@ use Procera::Compiler::AST::Coupler::Input;
 use Procera::Compiler::AST::Coupler::Output;
 use Procera::Compiler::AST::Coupler::Internal;
 use Procera::Compiler::AST::Coupler::Constant;
+use Procera::Compiler::AST::Coupler::Converge;
 
 
 sub new_process {
