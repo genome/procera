@@ -80,6 +80,30 @@ sub converge_couplers {
     return grep {$_->is_converge} @{$self->couplers};
 }
 
+sub get_input {
+    my ($self, $name) = @_;
+    return $self->_get_or_die('inputs', $name);
+}
+
+sub get_output {
+    my ($self, $name) = @_;
+    return $self->_get_or_die('outputs', $name);
+}
+
+sub get_param {
+    my ($self, $name) = @_;
+    return $self->_get_or_die('params', $name);
+}
+
+sub _get_or_die {
+    my ($self, $accessor, $name) = @_;
+
+    unless (exists($self->$accessor->{$name})) {
+        confess sprintf("Node %s (%s) has no %s named '%s'",
+            $self->source_path, $self->alias, $accessor, $name);
+    }
+    return $self->$accessor->{$name};
+}
 
 
 sub source_path_components {

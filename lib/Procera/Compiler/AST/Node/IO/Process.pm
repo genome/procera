@@ -104,7 +104,7 @@ sub _set_constants {
     for my $node (@{$self->nodes}) {
         my %node_constants = %{$node->constants};
         for my $name (keys %node_constants) {
-            my $data_end_point = $node->params->{$name};
+            my $data_end_point = $node->get_param($name);
             my $local_name = $self->_automatic_property_name($data_end_point);
             my $value = $node_constants{$name};
             $constants{$local_name} = $value;
@@ -142,13 +142,13 @@ sub _make_explicit_links {
     my @links;
     for my $destination_node (@{$self->nodes}) {
         for my $coupler ($destination_node->internal_couplers) {
-            my $destination_end_point = $destination_node->inputs->{$coupler->name};
+            my $destination_end_point = $destination_node->get_input($coupler->name);
 
             my $source_node = $self->_node_aliased($coupler->source_node_alias);
 
             my $source_end_point;
-            if ($source_node->outputs->{$coupler->source_name}) {
-                $source_end_point = $source_node->outputs->{$coupler->source_name};
+            if ($source_node->get_output($coupler->source_name)) {
+                $source_end_point = $source_node->get_output($coupler->source_name);
             } else {
                 confess sprintf("No output named (%s) on node %s (%s)",
                     $coupler->source_name, $source_node->source_path, $source_node->alias);
@@ -165,7 +165,7 @@ sub _make_converge_links {
 
     for my $destination_node (@{$self->nodes}) {
         for my $coupler ($destination_node->converge_couplers) {
-            my $destination_end_point = $destination_node->inputs->{$coupler->name};
+            my $destination_end_point = $destination_node->get_input($coupler->name);
             my $converge_node = $self->_add_converge_node(
                 $destination_end_point->full_name);
             $self->_link(source => $converge_node->output,
@@ -207,7 +207,7 @@ sub _end_point_from_source {
     if (ref $source eq 'ARRAY') {
         my ($source_node_alias, $source_name) = @{$source};
         my $source_node = $self->_node_aliased($source_node_alias);
-        return $source_node->outputs->{$source_name};
+        return $source_node->get_output($source_name);
     } else {
         return $self->_find_or_add_input($source);
     }
@@ -220,7 +220,7 @@ sub _make_explicit_inputs {
     my @links;
     for my $destination_node (@{$self->nodes}) {
         for my $coupler ($destination_node->input_couplers) {
-            my $destination_end_point = $destination_node->inputs->{$coupler->name};
+            my $destination_end_point = $destination_node->get_input($coupler->name);
 
             my $source_end_point = $self->_find_or_add_input($coupler->input_name);
             $self->_link(source => $source_end_point, destination => $destination_end_point);
@@ -245,7 +245,7 @@ sub _make_explicit_outputs {
     my @links;
     for my $source_node (@{$self->nodes}) {
         for my $coupler ($source_node->output_couplers) {
-            my $source_end_point = $source_node->outputs->{$coupler->name};
+            my $source_end_point = $source_node->get_output($coupler->name);
 
             my $destination_end_point = $self->_add_output(name => $coupler->output_name);
             $self->_link(source => $source_end_point, destination => $destination_end_point);
