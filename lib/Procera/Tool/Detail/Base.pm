@@ -3,7 +3,7 @@ use Moose;
 use warnings FATAL => 'all';
 
 use Procera::Factory::Persistence;
-use Procera::Storage;
+use Procera::Factory::Storage;
 use Procera::Translator;
 use File::Path qw();
 use File::Temp qw();
@@ -39,6 +39,12 @@ has _step_label => (
     required => 1,
 );
 has _persistence_type => (
+    is => 'ro',
+    isa => 'Str',
+    traits => ['Param', 'Contextual'],
+    required => 1,
+);
+has _storage_type => (
     is => 'ro',
     isa => 'Str',
     traits => ['Param', 'Contextual'],
@@ -116,7 +122,6 @@ sub _persistence {
     my $self = shift;
     return Procera::Factory::Persistence::create($self->_persistence_type);
 }
-Memoize::memoize('_persistence');
 
 sub _inputs_as_hashref {
     my $self = shift;
@@ -370,7 +375,7 @@ sub _md5sum {
 sub _storage {
     my $self = shift;
 
-    return Procera::Storage->new;
+    return Procera::Factory::Storage::create($self->_storage_type);
 }
 
 sub _set_output_uris {

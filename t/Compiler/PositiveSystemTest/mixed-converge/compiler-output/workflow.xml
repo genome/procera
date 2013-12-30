@@ -4,10 +4,12 @@
     <inputproperty>Concat._persistence_type</inputproperty>
     <inputproperty>Concat._process</inputproperty>
     <inputproperty>Concat._step_label</inputproperty>
+    <inputproperty>Concat._storage_type</inputproperty>
     <inputproperty>Concat.test_name</inputproperty>
     <inputproperty>ConcatArray._persistence_type</inputproperty>
     <inputproperty>ConcatArray._process</inputproperty>
     <inputproperty>ConcatArray._step_label</inputproperty>
+    <inputproperty>ConcatArray._storage_type</inputproperty>
     <inputproperty>ConcatArray.test_name</inputproperty>
     <inputproperty>item1</inputproperty>
     <inputproperty>item3</inputproperty>
@@ -21,6 +23,7 @@
       <inputproperty>_persistence_type</inputproperty>
       <inputproperty>_process</inputproperty>
       <inputproperty>_step_label</inputproperty>
+      <inputproperty>_storage_type</inputproperty>
       <inputproperty>prefix</inputproperty>
       <inputproperty>suffix</inputproperty>
       <inputproperty>test_name</inputproperty>
@@ -32,6 +35,7 @@
       <inputproperty>_persistence_type</inputproperty>
       <inputproperty>_process</inputproperty>
       <inputproperty>_step_label</inputproperty>
+      <inputproperty>_storage_type</inputproperty>
       <inputproperty>input_array</inputproperty>
       <inputproperty>test_name</inputproperty>
       <outputproperty>combination</outputproperty>
@@ -52,10 +56,12 @@
   <link fromOperation="input connector" fromProperty="ConcatArray._persistence_type" toOperation="ConcatArray" toProperty="_persistence_type" />
   <link fromOperation="input connector" fromProperty="ConcatArray._process" toOperation="ConcatArray" toProperty="_process" />
   <link fromOperation="input connector" fromProperty="ConcatArray._step_label" toOperation="ConcatArray" toProperty="_step_label" />
+  <link fromOperation="input connector" fromProperty="ConcatArray._storage_type" toOperation="ConcatArray" toProperty="_storage_type" />
   <link fromOperation="input connector" fromProperty="ConcatArray.test_name" toOperation="ConcatArray" toProperty="test_name" />
   <link fromOperation="input connector" fromProperty="Concat._persistence_type" toOperation="Concat" toProperty="_persistence_type" />
   <link fromOperation="input connector" fromProperty="Concat._process" toOperation="Concat" toProperty="_process" />
   <link fromOperation="input connector" fromProperty="Concat._step_label" toOperation="Concat" toProperty="_step_label" />
+  <link fromOperation="input connector" fromProperty="Concat._storage_type" toOperation="Concat" toProperty="_storage_type" />
   <link fromOperation="input connector" fromProperty="Concat.test_name" toOperation="Concat" toProperty="test_name" />
   <link fromOperation="input connector" fromProperty="prefix" toOperation="Concat" toProperty="prefix" />
   <link fromOperation="input connector" fromProperty="suffix" toOperation="Concat" toProperty="suffix" />

@@ -4,18 +4,22 @@
     <inputproperty>A._persistence_type</inputproperty>
     <inputproperty>A._process</inputproperty>
     <inputproperty>A._step_label</inputproperty>
+    <inputproperty>A._storage_type</inputproperty>
     <inputproperty>A.test_name</inputproperty>
     <inputproperty>BTest._persistence_type</inputproperty>
     <inputproperty>BTest._process</inputproperty>
     <inputproperty>BTest._step_label</inputproperty>
+    <inputproperty>BTest._storage_type</inputproperty>
     <inputproperty>BTest.test_name</inputproperty>
     <inputproperty>C.D._persistence_type</inputproperty>
     <inputproperty>C.D._process</inputproperty>
     <inputproperty>C.D._step_label</inputproperty>
+    <inputproperty>C.D._storage_type</inputproperty>
     <inputproperty>C.D.test_name</inputproperty>
     <inputproperty>C.E.F._persistence_type</inputproperty>
     <inputproperty>C.E.F._process</inputproperty>
     <inputproperty>C.E.F._step_label</inputproperty>
+    <inputproperty>C.E.F._storage_type</inputproperty>
     <inputproperty>C.E.F.test_name</inputproperty>
     <inputproperty>ai1</inputproperty>
     <inputproperty>di1</inputproperty>
@@ -26,6 +30,7 @@
       <inputproperty>_persistence_type</inputproperty>
       <inputproperty>_process</inputproperty>
       <inputproperty>_step_label</inputproperty>
+      <inputproperty>_storage_type</inputproperty>
       <inputproperty>ai1</inputproperty>
       <inputproperty>test_name</inputproperty>
       <outputproperty>ao1</outputproperty>
@@ -36,6 +41,7 @@
       <inputproperty>_persistence_type</inputproperty>
       <inputproperty>_process</inputproperty>
       <inputproperty>_step_label</inputproperty>
+      <inputproperty>_storage_type</inputproperty>
       <inputproperty>bi1</inputproperty>
       <inputproperty>bi2</inputproperty>
       <inputproperty>bi3</inputproperty>
@@ -48,10 +54,12 @@
       <inputproperty>D._persistence_type</inputproperty>
       <inputproperty>D._process</inputproperty>
       <inputproperty>D._step_label</inputproperty>
+      <inputproperty>D._storage_type</inputproperty>
       <inputproperty>D.test_name</inputproperty>
       <inputproperty>E.F._persistence_type</inputproperty>
       <inputproperty>E.F._process</inputproperty>
       <inputproperty>E.F._step_label</inputproperty>
+      <inputproperty>E.F._storage_type</inputproperty>
       <inputproperty>E.F.test_name</inputproperty>
       <inputproperty>di1</inputproperty>
       <inputproperty>fi1</inputproperty>
@@ -63,6 +71,7 @@
         <inputproperty>_persistence_type</inputproperty>
         <inputproperty>_process</inputproperty>
         <inputproperty>_step_label</inputproperty>
+        <inputproperty>_storage_type</inputproperty>
         <inputproperty>di1</inputproperty>
         <inputproperty>test_name</inputproperty>
         <outputproperty>do1</outputproperty>
@@ -73,6 +82,7 @@
         <inputproperty>F._persistence_type</inputproperty>
         <inputproperty>F._process</inputproperty>
         <inputproperty>F._step_label</inputproperty>
+        <inputproperty>F._storage_type</inputproperty>
         <inputproperty>F.test_name</inputproperty>
         <inputproperty>fi1</inputproperty>
         <outputproperty>fo1</outputproperty>
@@ -82,6 +92,7 @@
           <inputproperty>_persistence_type</inputproperty>
           <inputproperty>_process</inputproperty>
           <inputproperty>_step_label</inputproperty>
+          <inputproperty>_storage_type</inputproperty>
           <inputproperty>fi1</inputproperty>
           <inputproperty>test_name</inputproperty>
           <outputproperty>fo1</outputproperty>
@@ -91,6 +102,7 @@
       <link fromOperation="input connector" fromProperty="F._persistence_type" toOperation="F" toProperty="_persistence_type" />
       <link fromOperation="input connector" fromProperty="F._process" toOperation="F" toProperty="_process" />
       <link fromOperation="input connector" fromProperty="F._step_label" toOperation="F" toProperty="_step_label" />
+      <link fromOperation="input connector" fromProperty="F._storage_type" toOperation="F" toProperty="_storage_type" />
       <link fromOperation="input connector" fromProperty="F.test_name" toOperation="F" toProperty="test_name" />
       <link fromOperation="input connector" fromProperty="fi1" toOperation="F" toProperty="fi1" />
     </operation>
@@ -99,11 +111,13 @@
     <link fromOperation="input connector" fromProperty="D._persistence_type" toOperation="D" toProperty="_persistence_type" />
     <link fromOperation="input connector" fromProperty="D._process" toOperation="D" toProperty="_process" />
     <link fromOperation="input connector" fromProperty="D._step_label" toOperation="D" toProperty="_step_label" />
+    <link fromOperation="input connector" fromProperty="D._storage_type" toOperation="D" toProperty="_storage_type" />
     <link fromOperation="input connector" fromProperty="D.test_name" toOperation="D" toProperty="test_name" />
     <link fromOperation="input connector" fromProperty="di1" toOperation="D" toProperty="di1" />
     <link fromOperation="input connector" fromProperty="E.F._persistence_type" toOperation="E" toProperty="F._persistence_type" />
     <link fromOperation="input connector" fromProperty="E.F._process" toOperation="E" toProperty="F._process" />
     <link fromOperation="input connector" fromProperty="E.F._step_label" toOperation="E" toProperty="F._step_label" />
+    <link fromOperation="input connector" fromProperty="E.F._storage_type" toOperation="E" toProperty="F._storage_type" />
     <link fromOperation="input connector" fromProperty="E.F.test_name" toOperation="E" toProperty="F.test_name" />
     <link fromOperation="input connector" fromProperty="fi1" toOperation="E" toProperty="fi1" />
   </operation>
@@ -113,19 +127,23 @@
   <link fromOperation="input connector" fromProperty="A._persistence_type" toOperation="A" toProperty="_persistence_type" />
   <link fromOperation="input connector" fromProperty="A._process" toOperation="A" toProperty="_process" />
   <link fromOperation="input connector" fromProperty="A._step_label" toOperation="A" toProperty="_step_label" />
+  <link fromOperation="input connector" fromProperty="A._storage_type" toOperation="A" toProperty="_storage_type" />
   <link fromOperation="input connector" fromProperty="A.test_name" toOperation="A" toProperty="test_name" />
   <link fromOperation="input connector" fromProperty="ai1" toOperation="A" toProperty="ai1" />
   <link fromOperation="input connector" fromProperty="BTest._persistence_type" toOperation="BTest" toProperty="_persistence_type" />
   <link fromOperation="input connector" fromProperty="BTest._process" toOperation="BTest" toProperty="_process" />
   <link fromOperation="input connector" fromProperty="BTest._step_label" toOperation="BTest" toProperty="_step_label" />
+  <link fromOperation="input connector" fromProperty="BTest._storage_type" toOperation="BTest" toProperty="_storage_type" />
   <link fromOperation="input connector" fromProperty="BTest.test_name" toOperation="BTest" toProperty="test_name" />
   <link fromOperation="input connector" fromProperty="C.D._persistence_type" toOperation="C" toProperty="D._persistence_type" />
   <link fromOperation="input connector" fromProperty="C.D._process" toOperation="C" toProperty="D._process" />
   <link fromOperation="input connector" fromProperty="C.D._step_label" toOperation="C" toProperty="D._step_label" />
+  <link fromOperation="input connector" fromProperty="C.D._storage_type" toOperation="C" toProperty="D._storage_type" />
   <link fromOperation="input connector" fromProperty="C.D.test_name" toOperation="C" toProperty="D.test_name" />
   <link fromOperation="input connector" fromProperty="C.E.F._persistence_type" toOperation="C" toProperty="E.F._persistence_type" />
   <link fromOperation="input connector" fromProperty="C.E.F._process" toOperation="C" toProperty="E.F._process" />
   <link fromOperation="input connector" fromProperty="C.E.F._step_label" toOperation="C" toProperty="E.F._step_label" />
+  <link fromOperation="input connector" fromProperty="C.E.F._storage_type" toOperation="C" toProperty="E.F._storage_type" />
   <link fromOperation="input connector" fromProperty="C.E.F.test_name" toOperation="C" toProperty="E.F.test_name" />
   <link fromOperation="input connector" fromProperty="di1" toOperation="C" toProperty="di1" />
   <link fromOperation="input connector" fromProperty="fi1" toOperation="C" toProperty="fi1" />

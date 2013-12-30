@@ -1,6 +1,7 @@
 ConcatArray._persistence_type
 ConcatArray._process
 ConcatArray._step_label	ConcatArray
+ConcatArray._storage_type
 ConcatArray.test_name
 item1
 item3

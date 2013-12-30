@@ -1,10 +1,12 @@
 concat_1._persistence_type
 concat_1._process
 concat_1._step_label	concat_1
+concat_1._storage_type
 concat_1.test_name
 concat_2._persistence_type
 concat_2._process
 concat_2._step_label	concat_2
+concat_2._storage_type
 concat_2.test_name
 item1
 itemi2

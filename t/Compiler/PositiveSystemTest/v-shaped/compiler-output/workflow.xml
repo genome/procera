@@ -4,16 +4,19 @@
     <inputproperty>Y._persistence_type</inputproperty>
     <inputproperty>Y._process</inputproperty>
     <inputproperty>Y._step_label</inputproperty>
+    <inputproperty>Y._storage_type</inputproperty>
     <inputproperty>Y.test_name</inputproperty>
     <inputproperty>x1</inputproperty>
     <inputproperty>x1._persistence_type</inputproperty>
     <inputproperty>x1._process</inputproperty>
     <inputproperty>x1._step_label</inputproperty>
+    <inputproperty>x1._storage_type</inputproperty>
     <inputproperty>x1.test_name</inputproperty>
     <inputproperty>x2</inputproperty>
     <inputproperty>x2._persistence_type</inputproperty>
     <inputproperty>x2._process</inputproperty>
     <inputproperty>x2._step_label</inputproperty>
+    <inputproperty>x2._storage_type</inputproperty>
     <inputproperty>x2.test_name</inputproperty>
   </operationtype>
   <operation name="Y">
@@ -21,6 +24,7 @@
       <inputproperty>_persistence_type</inputproperty>
       <inputproperty>_process</inputproperty>
       <inputproperty>_step_label</inputproperty>
+      <inputproperty>_storage_type</inputproperty>
       <inputproperty>test_name</inputproperty>
       <inputproperty>y_in_1</inputproperty>
       <inputproperty>y_in_2</inputproperty>
@@ -32,6 +36,7 @@
       <inputproperty>_persistence_type</inputproperty>
       <inputproperty>_process</inputproperty>
       <inputproperty>_step_label</inputproperty>
+      <inputproperty>_storage_type</inputproperty>
       <inputproperty>test_name</inputproperty>
       <inputproperty>x_in_1</inputproperty>
       <outputproperty>x_out_1</outputproperty>
@@ -42,6 +47,7 @@
       <inputproperty>_persistence_type</inputproperty>
       <inputproperty>_process</inputproperty>
       <inputproperty>_step_label</inputproperty>
+      <inputproperty>_storage_type</inputproperty>
       <inputproperty>test_name</inputproperty>
       <inputproperty>x_in_1</inputproperty>
       <outputproperty>x_out_1</outputproperty>
@@ -50,15 +56,18 @@
   <link fromOperation="input connector" fromProperty="Y._persistence_type" toOperation="Y" toProperty="_persistence_type" />
   <link fromOperation="input connector" fromProperty="Y._process" toOperation="Y" toProperty="_process" />
   <link fromOperation="input connector" fromProperty="Y._step_label" toOperation="Y" toProperty="_step_label" />
+  <link fromOperation="input connector" fromProperty="Y._storage_type" toOperation="Y" toProperty="_storage_type" />
   <link fromOperation="input connector" fromProperty="Y.test_name" toOperation="Y" toProperty="test_name" />
   <link fromOperation="input connector" fromProperty="x1._persistence_type" toOperation="x1" toProperty="_persistence_type" />
   <link fromOperation="input connector" fromProperty="x1._process" toOperation="x1" toProperty="_process" />
   <link fromOperation="input connector" fromProperty="x1._step_label" toOperation="x1" toProperty="_step_label" />
+  <link fromOperation="input connector" fromProperty="x1._storage_type" toOperation="x1" toProperty="_storage_type" />
   <link fromOperation="input connector" fromProperty="x1.test_name" toOperation="x1" toProperty="test_name" />
   <link fromOperation="input connector" fromProperty="x1" toOperation="x1" toProperty="x_in_1" />
   <link fromOperation="input connector" fromProperty="x2._persistence_type" toOperation="x2" toProperty="_persistence_type" />
   <link fromOperation="input connector" fromProperty="x2._process" toOperation="x2" toProperty="_process" />
   <link fromOperation="input connector" fromProperty="x2._step_label" toOperation="x2" toProperty="_step_label" />
+  <link fromOperation="input connector" fromProperty="x2._storage_type" toOperation="x2" toProperty="_storage_type" />
   <link fromOperation="input connector" fromProperty="x2.test_name" toOperation="x2" toProperty="test_name" />
   <link fromOperation="input connector" fromProperty="x2" toOperation="x2" toProperty="x_in_1" />
   <link fromOperation="x1" fromProperty="x_out_1" toOperation="Y" toProperty="y_in_1" />

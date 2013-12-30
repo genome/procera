@@ -1,7 +1,9 @@
-package Procera::Storage;
+package Procera::Storage::Allocation;
 
 use Moose;
 use warnings FATAL => 'all';
+
+with 'Procera::Storage::Detail::Role';
 
 use Data::UUID qw();
 use File::Basename qw();
@@ -29,23 +31,25 @@ sub save_files {
     my $allocation = $self->create_allocation($total_size);
 
     for my $file (@_) {
-        _copy($file, File::Spec->join($allocation->absolute_path, $file));
+        _copy($file, File::Spec->join($allocation->{absolute_path}, $file));
     }
 
-    return $allocation->id;
+    return $allocation->{id};
 }
 
 sub create_allocation {
     my ($self, $kilobytes_requested) = @_;
 
     my $owner = Genome::Sys->current_user;
-    return Genome::Disk::Allocation->create(
+    my $allocation = Genome::Disk::Allocation->create(
         allocation_path => _generate_allocation_path(),
         disk_group_name => 'info_genome_models',
         owner_class_name => $owner->class,
         owner_id => $owner->id,
         kilobytes_requested => $kilobytes_requested,
     );
+
+    return {id => $allocation->id, absolute_path => $allocation->absolute_path};
 }
 
 sub _generate_allocation_path {

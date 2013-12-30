@@ -4,6 +4,7 @@
     <inputproperty>HasParam._persistence_type</inputproperty>
     <inputproperty>HasParam._process</inputproperty>
     <inputproperty>HasParam._step_label</inputproperty>
+    <inputproperty>HasParam._storage_type</inputproperty>
     <inputproperty>HasParam.p1</inputproperty>
     <inputproperty>HasParam.test_name</inputproperty>
   </operationtype>
@@ -12,6 +13,7 @@
       <inputproperty>_persistence_type</inputproperty>
       <inputproperty>_process</inputproperty>
       <inputproperty>_step_label</inputproperty>
+      <inputproperty>_storage_type</inputproperty>
       <inputproperty>p1</inputproperty>
       <inputproperty>test_name</inputproperty>
     </operationtype>
@@ -19,6 +21,7 @@
   <link fromOperation="input connector" fromProperty="HasParam._persistence_type" toOperation="HasParam" toProperty="_persistence_type" />
   <link fromOperation="input connector" fromProperty="HasParam._process" toOperation="HasParam" toProperty="_process" />
   <link fromOperation="input connector" fromProperty="HasParam._step_label" toOperation="HasParam" toProperty="_step_label" />
+  <link fromOperation="input connector" fromProperty="HasParam._storage_type" toOperation="HasParam" toProperty="_storage_type" />
   <link fromOperation="input connector" fromProperty="HasParam.p1" toOperation="HasParam" toProperty="p1" />
   <link fromOperation="input connector" fromProperty="HasParam.test_name" toOperation="HasParam" toProperty="test_name" />
 </operation>

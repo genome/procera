@@ -10,7 +10,7 @@ use File::Spec qw();
 use IO::File qw();
 use Procera::InputFile;
 use Procera::Factory::Persistence;
-use Procera::Storage;
+use Procera::Factory::Storage;
 
 use Log::Log4perl qw();
 
@@ -39,10 +39,10 @@ sub execute {
 
     my $allocation = $self->_create_allocation;
     my $process_log_directory = File::Spec->join(
-        $allocation->absolute_path, 'logs');
+        $allocation->{absolute_path}, 'logs');
 
     my $process = $self->_persistence->create_process({
-        allocation_id => $allocation->id,
+        allocation_id => $allocation->{id},
         steps => [],
         created_results => [],
     });
@@ -56,8 +56,8 @@ sub execute {
     $dag->name(_workflow_name($process));
     $dag->log_dir($process_log_directory);
 
-    _save_workflow($dag, $allocation->absolute_path);
-    _save_inputs($inputs_file, $allocation->absolute_path);
+    _save_workflow($dag, $allocation->{absolute_path});
+    _save_inputs($inputs_file, $allocation->{absolute_path});
 
     UR::Context->commit;
     return $dag->execute($inputs_file->as_hash);
@@ -66,7 +66,7 @@ sub execute {
 sub _create_allocation {
     my $self = shift;
 
-    my $storage = Procera::Storage->new;
+    my $storage = Procera::Factory::Storage::create($self->_storage_type);
     return $storage->create_allocation(2048);
 }
 
@@ -75,7 +75,6 @@ sub _persistence {
 
     return Procera::Factory::Persistence::create($self->_persistence_type);
 }
-Memoize::memoize('_persistence');
 
 sub _workflow_name {
     my $process = shift;
@@ -113,6 +112,7 @@ sub inputs_file {
     $combined_inputs->set_contextual_input('_process', $process);
     $combined_inputs->set_contextual_input('_persistence_type',
         _persistence_type());
+    $combined_inputs->set_contextual_input('_storage_type', _storage_type());
 
     return $combined_inputs;
 }
@@ -126,6 +126,14 @@ sub _persistence_type {
         return 'amber';
     } else {
         return 'memory';
+    }
+}
+
+sub _storage_type {
+    if ($ENV{ALLOCATION_URL}) {
+        return 'allocation';
+    } else {
+        return 'tmp';
     }
 }
 

@@ -1,14 +1,17 @@
 Y._persistence_type
 Y._process
 Y._step_label	Y
+Y._storage_type
 Y.test_name
 x1
 x1._persistence_type
 x1._process
 x1._step_label	x1
+x1._storage_type
 x1.test_name
 x2
 x2._persistence_type
 x2._process
 x2._step_label	x2
+x2._storage_type
 x2.test_name
