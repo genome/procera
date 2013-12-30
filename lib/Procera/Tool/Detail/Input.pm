@@ -10,4 +10,10 @@ has array => (
     isa => 'Bool',
 );
 
+has location => (
+    is =>'ro',
+    isa => 'Str',
+    predicate => 'has_location',
+);
+
 1;

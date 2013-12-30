@@ -2,13 +2,12 @@ package Procera::Tool::Detail::Base;
 use Moose;
 use warnings FATAL => 'all';
 
-use Amber::Factory::ManifestAllocation;
-use Amber::Manifest::Writer;
-use Amber::ProcessStep;
-use Amber::Result;
-use Amber::Translator;
+use Procera::Persistence;
+use Procera::Storage;
+use Procera::Translator;
 use File::Path qw();
 use File::Temp qw();
+use IO::File qw();
 use Log::Log4perl qw();
 use Memoize qw();
 use Procera::Tool::Detail::AttributeSetter;
@@ -85,21 +84,39 @@ sub shortcut {
     $logger->info("Attempting to shortcut ", ref $self,
         " with test name (", $self->test_name, ")");
 
-    my $result = Amber::Result->lookup(inputs => $self->_inputs_as_hashref,
-        tool_class_name => ref $self, test_name => $self->test_name);
+    my $result = $self->_persistence->get_result(
+        inputs => $self->_inputs_as_hashref,
+        tool_name => ref $self, test_name => $self->test_name);
 
     if ($result) {
-        $logger->info("Found matching result with lookup hash (",
-            $result->lookup_hash, ")");
+        $logger->info("Found matching result ", $result->{resource_uri});
         $self->_set_outputs_from_result($result);
 
-        $self->_create_process_step($result);
+        $self->_persistence->add_step_to_process(
+            label => $self->_step_label,
+            process => $self->_process,
+            result => $result->{resource_uri},
+        );
+
         return 1;
 
     } else {
         $logger->info("No matching result found for shortcut");
         return;
     }
+}
+
+sub _persistence {
+    my $self = shift;
+    return Procera::Persistence->new(base_url => $self->_amber_url);
+}
+Memoize::memoize('_persistence');
+
+sub _amber_url {
+    my $self = shift;
+
+    return $ENV{AMBER_URL}
+        or Carp::confess("Environment variable AMBER_URL not set");
 }
 
 sub _inputs_as_hashref {
@@ -136,7 +153,7 @@ sub _property_names {
 sub _set_outputs_from_result {
     my ($self, $result) = @_;
 
-    my $result_outputs = $result->outputs;
+    my $result_outputs = $result->{outputs};
     for my $output_name (keys %$result_outputs) {
         $self->$output_name($result_outputs->{$output_name});
     }
@@ -144,22 +161,16 @@ sub _set_outputs_from_result {
     return;
 }
 
-sub _create_process_step {
-    my ($self, $result) = @_;
-
-    $self->_translate_inputs('_process', '_step_label');
-    Amber::ProcessStep->create(process => $self->_process, result => $result,
-        label => $self->_step_label);
-
-    return;
-}
-
 sub _translate_inputs {
     my $self = shift;
 
-    my $translator = Amber::Translator->new();
+    my $translator = Procera::Translator->new(
+        persistence => $self->_persistence,
+        storage => $self->_storage,
+    );
     for my $input_name (@_) {
-        $self->$input_name($translator->resolve_scalar_or_url($self->$input_name));
+        $self->$input_name($translator->resolve_scalar_or_url(
+                $self->$input_name));
     }
 
     return;
@@ -170,7 +181,7 @@ sub execute {
     my $self = shift;
 
     $self->_setup;
-    $logger->info("Process id: ", $self->_process->id);
+    $logger->info("Process uri: ", $self->_process->{resource_uri});
 
     eval {
         $self->execute_tool;
@@ -197,9 +208,12 @@ sub _setup {
     $self->_setup_workspace;
     $self->_cache_raw_inputs;
     $self->_translate_inputs($self->inputs, $self->_contextual_params);
+    $self->_symlink_inputs;
+    $self->_reset_inputs_with_locations;
 
     return;
 }
+
 
 sub _setup_workspace {
     my $self = shift;
@@ -217,6 +231,63 @@ sub _cache_raw_inputs {
     $self->_raw_inputs($self->_inputs_as_hashref);
 
     return;
+}
+
+sub _symlink_inputs {
+    my $self = shift;
+
+    for my $input ($self->_inputs_with_locations) {
+        my $name = $input->name;
+        _symlink_into_workspace($self->$name, $input->location);
+    }
+
+    return;
+}
+
+sub _reset_inputs_with_locations {
+    my $self = shift;
+
+    for my $input ($self->_inputs_with_locations) {
+        my $name = $input->name;
+        $self->$name($input->location);
+    }
+
+    return;
+}
+
+sub _inputs_with_locations {
+    my $class = shift;
+    return grep {$_->has_location} grep {$_->does('Input')}
+        $class->meta->get_all_attributes;
+}
+
+sub _symlink_into_workspace {
+    my ($source_path, $relative_dest_path) = @_;
+
+    if (_is_absolute($relative_dest_path)) {
+        Carp::confess(sprintf("Got absolute path (%s) for input location.  "
+                . "Relative path required.", $relative_dest_path));
+    }
+
+    _make_path($relative_dest_path);
+    symlink $source_path, $relative_dest_path;
+
+    return;
+}
+
+sub _make_path {
+    my $full_path = shift;
+
+    my ($file, $path) = File::Basename::fileparse($full_path);
+    File::Path::make_path($path);
+
+    return;
+}
+
+sub _is_absolute {
+    my $path = shift;
+
+    return File::Spec->rel2abs($path) eq $path;
 }
 
 sub _contextual_params {
@@ -244,53 +315,125 @@ sub _save {
 
     $self->_verify_outputs_in_workspace;
 
-    my $allocation = $self->_save_outputs;
-    $self->_translate_outputs($allocation);
-    my $result = $self->_create_checkpoint($allocation);
-    $self->_create_process_step($result);
+    my $allocation_id = $self->_storage->save_files(
+        map {$self->$_} $self->_saved_file_names);
+    my $fileset = $self->_create_fileset_for_outputs($allocation_id);
+    $self->_set_output_uris($fileset);
+    $self->_create_result;
 
     return;
 };
 
 sub _verify_outputs_in_workspace { }
 
-sub _save_outputs {
-    my $self = shift;
+sub _create_fileset_for_outputs {
+    my ($self, $allocation_id) = @_;
 
-    $self->_create_output_manifest;
-    my $allocation = Amber::Factory::ManifestAllocation::from_manifest(
-        $self->_workspace_manifest_path);
-
-    $logger->info("Saved outputs from tool '", ref $self,
-        "' to allocation (", $allocation->id, ")");
-    $allocation->reallocate;
-
-    return $allocation;
+    return $self->_persistence->create_fileset(
+        {
+            files => [$self->_output_file_hashes],
+            allocations => [{allocation_id => $allocation_id}],
+        }
+    );
 }
 
-sub _create_output_manifest {
+sub _output_file_hashes {
     my $self = shift;
 
-    my $writer = Amber::Manifest::Writer->create(
-        manifest_file => $self->_workspace_manifest_path);
+    my @result;
     for my $output_name ($self->_saved_file_names) {
-        my $path = $self->$output_name || '';
-        if (-e $path) {
-            $writer->add_file(path => $path, kilobytes => -s $path,
-                tag => $output_name);
-        } else {
-            confess sprintf("Failed to save output '%s'", $path);
-        }
+        push @result, $self->_output_file_hash($output_name);
     }
-    $writer->save;
+
+    return @result;
+}
+
+sub _output_file_hash {
+    my ($self, $output_name) = @_;
+
+    my $path = $self->$output_name;
+    unless (-f $path) {
+        Carp::confess(sprintf("Path (%s) contained in output '%s' on tool "
+                . "'%s' is not a valid file.",
+                $path, $output_name, ref $self));
+    }
+
+    return {
+        path => $path,
+        size => -s $path,
+        md5 => _md5sum($path),
+    };
+}
+
+sub _md5sum {
+    my $path = shift;
+
+    my $context = Digest::MD5->new;
+    my $fh = IO::File->new($path, 'r');
+    $context->addfile($fh);
+    return $context->hexdigest;
+}
+
+sub _storage {
+    my $self = shift;
+
+    return Procera::Storage->new;
+}
+
+sub _set_output_uris {
+    my ($self, $fileset) = @_;
+
+    my $path_to_name_map = $self->_get_output_path_to_name_map;
+    for my $file (@{$fileset->{files}}) {
+        my $output_name = $path_to_name_map->{$file->{path}};
+        $self->$output_name($file->{resource_uri});
+    }
 
     return;
 }
 
-sub _workspace_manifest_path {
+sub _get_output_path_to_name_map {
     my $self = shift;
-    return File::Spec->join($self->_workspace_path, 'manifest.xml');
+
+    my %result;
+    for my $output_name ($self->outputs) {
+        $result{$self->$output_name} = $output_name;
+    }
+
+    return \%result;
 }
+
+sub _create_result {
+    my $self = shift;
+
+    my $result = $self->_persistence->create_result({
+        tool_name => ref $self,
+        test_name => $self->test_name,
+        creating_process => $self->_process->{resource_uri},
+        inputs => $self->_raw_inputs,
+        outputs => $self->_get_outputs,
+    });
+
+    $self->_persistence->add_step_to_process(
+        label => $self->_step_label,
+        process => $self->_process->{resource_uri},
+        result => $result->{resource_uri},
+    );
+
+    return;
+}
+
+sub _get_outputs {
+    my $self = shift;
+
+    my %result;
+    for my $output_name ($self->outputs) {
+        $result{$output_name} = $self->$output_name;
+    }
+
+    return \%result;
+}
+
 
 sub _saved_file_names {
     my $class = shift;
@@ -298,47 +441,6 @@ sub _saved_file_names {
     return map {$_->name} grep {$_->does('Output') && $_->save}
         $class->meta->get_all_attributes;
 }
-
-sub _translate_outputs {
-    my ($self, $allocation) = @_;
-
-    for my $output_file_name ($self->_saved_file_names) {
-        $self->$output_file_name(
-            _translate_output($allocation->id, $output_file_name)
-        );
-    }
-
-    return;
-}
-
-sub _translate_output {
-    my ($allocation_id, $tag) = @_;
-
-    return sprintf('gms:///data/%s?tag=%s', $allocation_id, $tag);
-}
-
-sub _create_checkpoint {
-    my ($self, $allocation) = @_;
-
-    my $result = Amber::Result->create(tool_class_name => ref $self,
-        test_name => $self->test_name, allocation => $allocation,
-        owner => $self->_process);
-
-    for my $input_name ($self->_non_contextual_input_names) {
-        $result->add_input(name => $input_name,
-            value => $self->_raw_inputs->{$input_name});
-    }
-
-    for my $output_name ($self->outputs) {
-        $result->add_output(name => $output_name,
-            value => $self->$output_name);
-    }
-
-    $result->update_lookup_hash;
-
-    return $result;
-}
-
 
 
 no Procera::Tool::Detail::AttributeSetter;
