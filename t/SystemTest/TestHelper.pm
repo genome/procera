@@ -16,6 +16,7 @@ use Procera::Runner;
 sub run_system_test {
     my $test_file = shift;
 
+    delete $ENV{AMBER_URL};  # Use memory persistence instead of amber
     my ($junk, $test_dir) = File::Basename::fileparse($test_file);
 
     my $output_directory = File::Temp::tempdir(CLEANUP => 1);

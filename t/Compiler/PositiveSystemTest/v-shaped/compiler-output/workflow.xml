@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <operation name="root">
   <operationtype typeClass="Workflow::OperationType::Model">
+    <inputproperty>Y._persistence_type</inputproperty>
     <inputproperty>Y._process</inputproperty>
     <inputproperty>Y._step_label</inputproperty>
     <inputproperty>Y.test_name</inputproperty>
     <inputproperty>x1</inputproperty>
+    <inputproperty>x1._persistence_type</inputproperty>
     <inputproperty>x1._process</inputproperty>
     <inputproperty>x1._step_label</inputproperty>
     <inputproperty>x1.test_name</inputproperty>
     <inputproperty>x2</inputproperty>
+    <inputproperty>x2._persistence_type</inputproperty>
     <inputproperty>x2._process</inputproperty>
     <inputproperty>x2._step_label</inputproperty>
     <inputproperty>x2.test_name</inputproperty>
   </operationtype>
   <operation name="Y">
     <operationtype typeClass="Workflow::OperationType::Command" commandClass="Y">
+      <inputproperty>_persistence_type</inputproperty>
       <inputproperty>_process</inputproperty>
       <inputproperty>_step_label</inputproperty>
       <inputproperty>test_name</inputproperty>
@@ -25,6 +29,7 @@
   </operation>
   <operation name="x1">
     <operationtype typeClass="Workflow::OperationType::Command" commandClass="X">
+      <inputproperty>_persistence_type</inputproperty>
       <inputproperty>_process</inputproperty>
       <inputproperty>_step_label</inputproperty>
       <inputproperty>test_name</inputproperty>
@@ -34,6 +39,7 @@
   </operation>
   <operation name="x2">
     <operationtype typeClass="Workflow::OperationType::Command" commandClass="X">
+      <inputproperty>_persistence_type</inputproperty>
       <inputproperty>_process</inputproperty>
       <inputproperty>_step_label</inputproperty>
       <inputproperty>test_name</inputproperty>
@@ -41,13 +47,16 @@
       <outputproperty>x_out_1</outputproperty>
     </operationtype>
   </operation>
+  <link fromOperation="input connector" fromProperty="Y._persistence_type" toOperation="Y" toProperty="_persistence_type" />
   <link fromOperation="input connector" fromProperty="Y._process" toOperation="Y" toProperty="_process" />
   <link fromOperation="input connector" fromProperty="Y._step_label" toOperation="Y" toProperty="_step_label" />
   <link fromOperation="input connector" fromProperty="Y.test_name" toOperation="Y" toProperty="test_name" />
+  <link fromOperation="input connector" fromProperty="x1._persistence_type" toOperation="x1" toProperty="_persistence_type" />
   <link fromOperation="input connector" fromProperty="x1._process" toOperation="x1" toProperty="_process" />
   <link fromOperation="input connector" fromProperty="x1._step_label" toOperation="x1" toProperty="_step_label" />
   <link fromOperation="input connector" fromProperty="x1.test_name" toOperation="x1" toProperty="test_name" />
   <link fromOperation="input connector" fromProperty="x1" toOperation="x1" toProperty="x_in_1" />
+  <link fromOperation="input connector" fromProperty="x2._persistence_type" toOperation="x2" toProperty="_persistence_type" />
   <link fromOperation="input connector" fromProperty="x2._process" toOperation="x2" toProperty="_process" />
   <link fromOperation="input connector" fromProperty="x2._step_label" toOperation="x2" toProperty="_step_label" />
   <link fromOperation="input connector" fromProperty="x2.test_name" toOperation="x2" toProperty="test_name" />

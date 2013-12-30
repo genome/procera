@@ -1,8 +1,9 @@
-package Procera::Persistence;
+package Procera::Persistence::Amber;
 
 use Moose;
 use warnings FATAL => 'all';
 
+with 'Procera::Persistence::Detail::Role';
 
 use Data::Dumper qw();
 use JSON qw();
@@ -10,11 +11,6 @@ use LWP::UserAgent qw();
 use Params::Validate qw();
 use URI::URL qw();
 
-
-has base_url => (
-    is => 'ro',
-    isa => 'Str',
-);
 
 my $_json_codec = JSON->new;
 my $_user_agent = LWP::UserAgent->new;
@@ -24,20 +20,14 @@ sub create_process {
     my ($self, $content) = @_;
     my $post_response = $self->_post('/v1/processes/', $content);
 
-    return $self->_get_created_resource($post_response);
-}
-
-sub get_process {
-    my ($self, $path) = @_;
-
-    return $self->_get_or_die($path);
+    return $self->_get_created_url($post_response);
 }
 
 sub create_result {
     my ($self, $content) = @_;
     my $post_response = $self->_post('/v1/results/', $content);
 
-    return $self->_get_created_resource($post_response);
+    return $self->_get_created_url($post_response);
 }
 
 sub get_result {
@@ -48,8 +38,7 @@ sub get_result {
         return;
     } else {
         my $checkpoint_data = $self->_decode_response($checkpoint_response);
-        my $result_id = $checkpoint_data->{objects}->[0];
-        return $self->_get_or_die($result_id);
+        return $self->_get_or_die($checkpoint_data->{objects}->[0]);
     }
 }
 
@@ -85,22 +74,7 @@ sub add_step_to_process {
         result => $params{result},
     });
 
-    return $self->_get_created_resource($post_response);
-}
-
-sub add_allocation_to_fileset {
-    my $self = shift;
-    my %params = Params::Validate::validate(@_, {
-        allocation_id => { type => Params::Validate::SCALAR, required => 1, },
-        fileset => { type => Params::Validate::HASHREF, required => 1, },
-    });
-
-    my $post_response = $self->_post('/v1/allocations/', {
-        allocation_id => $params{allocation_id},
-        fileset => $params{fileset}->{resource_uri},
-    });
-
-    return $self->_get_created_resource($post_response);
+    return $self->_get_created_url($post_response);
 }
 
 sub get_file {
@@ -144,8 +118,16 @@ sub _get {
 sub _full_url {
     my ($self, $path) = @_;
 
-    return URI::URL->new($path, $self->base_url)->abs;
+    return URI::URL->new($path, $self->_base_url)->abs;
 }
+
+sub _base_url {
+    my $self = shift;
+
+    return $ENV{AMBER_URL}
+        or Carp::confess("Environment variable AMBER_URL not set");
+}
+
 
 sub _post {
     my ($self, $path, $data) = @_;
@@ -162,6 +144,18 @@ sub _get_created_resource {
     if ($post_response->is_success) {
         return $self->_decode_response($self->_get(
                 $post_response->header('Location')));
+    } else {
+        Carp::confess(sprintf("Failed to create resource: %s",
+                Data::Dumper::Dumper($post_response)));
+    }
+}
+
+sub _get_created_url {
+    my ($self, $post_response) = @_;
+
+    if ($post_response->is_success) {
+        my $uri = URI::URL->new($post_response->header('Location'));
+        return $uri->path;
     } else {
         Carp::confess(sprintf("Failed to create resource: %s",
                 Data::Dumper::Dumper($post_response)));

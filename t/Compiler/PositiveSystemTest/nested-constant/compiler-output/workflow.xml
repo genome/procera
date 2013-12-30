@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <operation name="root">
   <operationtype typeClass="Workflow::OperationType::Model">
+    <inputproperty>ProcessWithConstant.HasParam._persistence_type</inputproperty>
     <inputproperty>ProcessWithConstant.HasParam._process</inputproperty>
     <inputproperty>ProcessWithConstant.HasParam._step_label</inputproperty>
     <inputproperty>ProcessWithConstant.HasParam.p1</inputproperty>
@@ -8,6 +9,7 @@
   </operationtype>
   <operation name="ProcessWithConstant">
     <operationtype typeClass="Workflow::OperationType::Model">
+      <inputproperty>HasParam._persistence_type</inputproperty>
       <inputproperty>HasParam._process</inputproperty>
       <inputproperty>HasParam._step_label</inputproperty>
       <inputproperty>HasParam.p1</inputproperty>
@@ -15,17 +17,20 @@
     </operationtype>
     <operation name="HasParam">
       <operationtype typeClass="Workflow::OperationType::Command" commandClass="HasParam">
+        <inputproperty>_persistence_type</inputproperty>
         <inputproperty>_process</inputproperty>
         <inputproperty>_step_label</inputproperty>
         <inputproperty>p1</inputproperty>
         <inputproperty>test_name</inputproperty>
       </operationtype>
     </operation>
+    <link fromOperation="input connector" fromProperty="HasParam._persistence_type" toOperation="HasParam" toProperty="_persistence_type" />
     <link fromOperation="input connector" fromProperty="HasParam._process" toOperation="HasParam" toProperty="_process" />
     <link fromOperation="input connector" fromProperty="HasParam._step_label" toOperation="HasParam" toProperty="_step_label" />
     <link fromOperation="input connector" fromProperty="HasParam.p1" toOperation="HasParam" toProperty="p1" />
     <link fromOperation="input connector" fromProperty="HasParam.test_name" toOperation="HasParam" toProperty="test_name" />
   </operation>
+  <link fromOperation="input connector" fromProperty="ProcessWithConstant.HasParam._persistence_type" toOperation="ProcessWithConstant" toProperty="HasParam._persistence_type" />
   <link fromOperation="input connector" fromProperty="ProcessWithConstant.HasParam._process" toOperation="ProcessWithConstant" toProperty="HasParam._process" />
   <link fromOperation="input connector" fromProperty="ProcessWithConstant.HasParam._step_label" toOperation="ProcessWithConstant" toProperty="HasParam._step_label" />
   <link fromOperation="input connector" fromProperty="ProcessWithConstant.HasParam.p1" toOperation="ProcessWithConstant" toProperty="HasParam.p1" />

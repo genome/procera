@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <operation name="root">
   <operationtype typeClass="Workflow::OperationType::Model">
+    <inputproperty>Concat._persistence_type</inputproperty>
     <inputproperty>Concat._process</inputproperty>
     <inputproperty>Concat._step_label</inputproperty>
     <inputproperty>Concat.test_name</inputproperty>
+    <inputproperty>ConcatArray._persistence_type</inputproperty>
     <inputproperty>ConcatArray._process</inputproperty>
     <inputproperty>ConcatArray._step_label</inputproperty>
     <inputproperty>ConcatArray.test_name</inputproperty>
@@ -16,6 +18,7 @@
   </operationtype>
   <operation name="Concat">
     <operationtype typeClass="Workflow::OperationType::Command" commandClass="TestTool::Concat">
+      <inputproperty>_persistence_type</inputproperty>
       <inputproperty>_process</inputproperty>
       <inputproperty>_step_label</inputproperty>
       <inputproperty>prefix</inputproperty>
@@ -26,6 +29,7 @@
   </operation>
   <operation name="ConcatArray">
     <operationtype typeClass="Workflow::OperationType::Command" commandClass="TestTool::ConcatArray">
+      <inputproperty>_persistence_type</inputproperty>
       <inputproperty>_process</inputproperty>
       <inputproperty>_step_label</inputproperty>
       <inputproperty>input_array</inputproperty>
@@ -45,9 +49,11 @@
   <link fromOperation="ConcatArray" fromProperty="combination" toOperation="output connector" toProperty="combination" />
   <link fromOperation="Concat" fromProperty="combination" toOperation="Converge to ConcatArray.input_array" toProperty="input_00004" />
   <link fromOperation="Converge to ConcatArray.input_array" fromProperty="output" toOperation="ConcatArray" toProperty="input_array" />
+  <link fromOperation="input connector" fromProperty="ConcatArray._persistence_type" toOperation="ConcatArray" toProperty="_persistence_type" />
   <link fromOperation="input connector" fromProperty="ConcatArray._process" toOperation="ConcatArray" toProperty="_process" />
   <link fromOperation="input connector" fromProperty="ConcatArray._step_label" toOperation="ConcatArray" toProperty="_step_label" />
   <link fromOperation="input connector" fromProperty="ConcatArray.test_name" toOperation="ConcatArray" toProperty="test_name" />
+  <link fromOperation="input connector" fromProperty="Concat._persistence_type" toOperation="Concat" toProperty="_persistence_type" />
   <link fromOperation="input connector" fromProperty="Concat._process" toOperation="Concat" toProperty="_process" />
   <link fromOperation="input connector" fromProperty="Concat._step_label" toOperation="Concat" toProperty="_step_label" />
   <link fromOperation="input connector" fromProperty="Concat.test_name" toOperation="Concat" toProperty="test_name" />

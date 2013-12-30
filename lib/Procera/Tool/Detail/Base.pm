@@ -2,7 +2,7 @@ package Procera::Tool::Detail::Base;
 use Moose;
 use warnings FATAL => 'all';
 
-use Procera::Persistence;
+use Procera::Factory::Persistence;
 use Procera::Storage;
 use Procera::Translator;
 use File::Path qw();
@@ -22,18 +22,24 @@ my $logger = Log::Log4perl->get_logger();
 
 
 has test_name => (
-    is => 'rw',
+    is => 'ro',
     isa => 'Str',
     traits => ['Param', 'Contextual'],
     required => 1,
 );
 has _process => (
-    is => 'rw',
+    is => 'ro',
     traits => ['Param', 'Contextual'],
     required => 1,
 );
 has _step_label => (
-    is => 'rw',
+    is => 'ro',
+    isa => 'Str',
+    traits => ['Param', 'Contextual'],
+    required => 1,
+);
+has _persistence_type => (
+    is => 'ro',
     isa => 'Str',
     traits => ['Param', 'Contextual'],
     required => 1,
@@ -108,16 +114,9 @@ sub shortcut {
 
 sub _persistence {
     my $self = shift;
-    return Procera::Persistence->new(base_url => $self->_amber_url);
+    return Procera::Factory::Persistence::create($self->_persistence_type);
 }
 Memoize::memoize('_persistence');
-
-sub _amber_url {
-    my $self = shift;
-
-    return $ENV{AMBER_URL}
-        or Carp::confess("Environment variable AMBER_URL not set");
-}
 
 sub _inputs_as_hashref {
     my $self = shift;
@@ -181,7 +180,7 @@ sub execute {
     my $self = shift;
 
     $self->_setup;
-    $logger->info("Process uri: ", $self->_process->{resource_uri});
+    $logger->info("Process uri: ", $self->_process);
 
     eval {
         $self->execute_tool;
@@ -207,7 +206,7 @@ sub _setup {
 
     $self->_setup_workspace;
     $self->_cache_raw_inputs;
-    $self->_translate_inputs($self->inputs, $self->_contextual_params);
+    $self->_translate_inputs($self->inputs);
     $self->_symlink_inputs;
     $self->_reset_inputs_with_locations;
 
@@ -288,12 +287,6 @@ sub _is_absolute {
     my $path = shift;
 
     return File::Spec->rel2abs($path) eq $path;
-}
-
-sub _contextual_params {
-    my $self = shift;
-    return map {$_->name} grep {$_->does('Contextual')}
-        $self->meta->get_all_attributes;
 }
 
 
@@ -409,15 +402,15 @@ sub _create_result {
     my $result = $self->_persistence->create_result({
         tool_name => ref $self,
         test_name => $self->test_name,
-        creating_process => $self->_process->{resource_uri},
+        creating_process => $self->_process,
         inputs => $self->_raw_inputs,
         outputs => $self->_get_outputs,
     });
 
     $self->_persistence->add_step_to_process(
         label => $self->_step_label,
-        process => $self->_process->{resource_uri},
-        result => $result->{resource_uri},
+        process => $self->_process,
+        result => $result,
     );
 
     return;

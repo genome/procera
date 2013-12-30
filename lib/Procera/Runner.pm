@@ -9,7 +9,7 @@ use Carp qw(confess);
 use File::Spec qw();
 use IO::File qw();
 use Procera::InputFile;
-use Procera::Persistence;
+use Procera::Factory::Persistence;
 use Procera::Storage;
 
 use Log::Log4perl qw();
@@ -37,19 +37,17 @@ sub execute {
         confess "No inputs files given to runner";
     }
 
-    my $storage = Procera::Storage->new;
-    my $allocation = $storage->create_allocation(2048);
+    my $allocation = $self->_create_allocation;
     my $process_log_directory = File::Spec->join(
         $allocation->absolute_path, 'logs');
 
-    my $persistence = Procera::Persistence->new(base_url => $self->_amber_url);
-    my $process = $persistence->create_process({
+    my $process = $self->_persistence->create_process({
         allocation_id => $allocation->id,
         steps => [],
         created_results => [],
     });
 
-    $logger->info('Launching Process ', $process->{resource_uri},
+    $logger->info('Launching Process ', $process,
         ' (', $process_log_directory, ')');
 
     my $inputs_file = $self->inputs_file($process);
@@ -65,14 +63,24 @@ sub execute {
     return $dag->execute($inputs_file->as_hash);
 }
 
-sub _amber_url {
-    return $ENV{AMBER_URL} || 'http://localhost:8000';
+sub _create_allocation {
+    my $self = shift;
+
+    my $storage = Procera::Storage->new;
+    return $storage->create_allocation(2048);
 }
+
+sub _persistence {
+    my $self = shift;
+
+    return Procera::Factory::Persistence::create($self->_persistence_type);
+}
+Memoize::memoize('_persistence');
 
 sub _workflow_name {
     my $process = shift;
 
-    return sprintf("Process %s", $process->{resource_uri});
+    return sprintf("Process %s", $process);
 }
 
 sub _save_workflow {
@@ -101,14 +109,24 @@ sub inputs_file {
         $combined_inputs->update($input_file);
     }
 
-    $combined_inputs->set_test_name(_test_name());
-    $combined_inputs->set_process($process->{resource_uri});
+    $combined_inputs->set_contextual_input('test_name', _test_name());
+    $combined_inputs->set_contextual_input('_process', $process);
+    $combined_inputs->set_contextual_input('_persistence_type',
+        _persistence_type());
 
     return $combined_inputs;
 }
 
 sub _test_name {
     return $ENV{GENOME_SOFTWARE_RESULT_TEST_NAME} || 'NONE';
+}
+
+sub _persistence_type {
+    if ($ENV{AMBER_URL}) {
+        return 'amber';
+    } else {
+        return 'memory';
+    }
 }
 
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <operation name="root">
   <operationtype typeClass="Workflow::OperationType::Model">
+    <inputproperty>A._persistence_type</inputproperty>
     <inputproperty>A._process</inputproperty>
     <inputproperty>A._step_label</inputproperty>
     <inputproperty>A.test_name</inputproperty>
@@ -9,6 +10,7 @@
   </operationtype>
   <operation name="A">
     <operationtype typeClass="Workflow::OperationType::Command" commandClass="A">
+      <inputproperty>_persistence_type</inputproperty>
       <inputproperty>_process</inputproperty>
       <inputproperty>_step_label</inputproperty>
       <inputproperty>ai1</inputproperty>
@@ -17,6 +19,7 @@
     </operationtype>
   </operation>
   <link fromOperation="A" fromProperty="ao1" toOperation="output connector" toProperty="out_1" />
+  <link fromOperation="input connector" fromProperty="A._persistence_type" toOperation="A" toProperty="_persistence_type" />
   <link fromOperation="input connector" fromProperty="A._process" toOperation="A" toProperty="_process" />
   <link fromOperation="input connector" fromProperty="A._step_label" toOperation="A" toProperty="_step_label" />
   <link fromOperation="input connector" fromProperty="A.test_name" toOperation="A" toProperty="test_name" />

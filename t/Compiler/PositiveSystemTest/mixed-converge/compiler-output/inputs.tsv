@@ -1,6 +1,8 @@
+Concat._persistence_type
 Concat._process
 Concat._step_label	Concat
 Concat.test_name
+ConcatArray._persistence_type
 ConcatArray._process
 ConcatArray._step_label	ConcatArray
 ConcatArray.test_name

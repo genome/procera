@@ -128,24 +128,15 @@ sub _validate_no_duplicate_names {
     return;
 }
 
-sub set_process {
-    my ($self, $url) = @_;
+sub set_contextual_input {
+    my ($self, $attribute, $value) = @_;
+
+    my $regex = sprintf('^.*\.%s$', $attribute);
 
     for my $entry (@{$self->entries}) {
-        if ($entry->name =~ m/^.*\._process$/) {
-            $self->set_inputs($entry->name, $url);
-        }
-    }
-    return;
-}
-
-sub set_test_name {
-    my ($self, $test_name) = @_;
-
-    for my $entry (@{$self->entries}) {
-        if ($entry->name =~ m/^.*\.test_name$/) {
+        if ($entry->name =~ m/$regex/) {
             unless ($entry->has_value) {
-                $self->set_inputs($entry->name, $test_name);
+                $self->set_inputs($entry->name, $value);
             }
         }
     }

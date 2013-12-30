@@ -1,12 +1,16 @@
+A._persistence_type
 A._process
 A._step_label	A
 A.test_name
+BTest._persistence_type
 BTest._process
 BTest._step_label	BTest
 BTest.test_name
+C.D._persistence_type
 C.D._process
 C.D._step_label	C.D
 C.D.test_name
+C.E.F._persistence_type
 C.E.F._process
 C.E.F._step_label	C.E.F
 C.E.F.test_name
