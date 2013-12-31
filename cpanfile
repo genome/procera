@@ -7,7 +7,7 @@ requires "Log::Log4Perl";
 requires "Moose";
 requires "Params::Validate";
 requires "URI::URL";
-requires "XML::LibXML";  # for workflow builder
+requires "XML::LibXML";
 
 on 'test' => sub {
   requires "Test::Exception";
