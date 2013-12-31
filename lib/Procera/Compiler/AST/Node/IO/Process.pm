@@ -8,11 +8,12 @@ use List::MoreUtils qw(first_index);
 use Params::Validate qw();
 use Set::Scalar;
 use Memoize;
-use Genome;
 
 use Procera::Compiler::AST::Node::IO::Tool;
 use Procera::Compiler::AST::Node::Converge;
 use Procera::Compiler::AST::Link;
+
+use Procera::WorkflowBuilder::DAG;
 
 extends 'Procera::Compiler::AST::Node::IO';
 
@@ -62,7 +63,7 @@ sub set_step_labels {
 sub dag {
     my $self = shift;
 
-    my $dag = Genome::WorkflowBuilder::DAG->create(
+    my $dag = Procera::WorkflowBuilder::DAG->new(
         name => $self->alias,
         parallel_by => $self->parallel,
     );

@@ -5,7 +5,7 @@ use warnings FATAL => 'all';
 
 use Carp qw(confess);
 use Memoize;
-use Genome;
+use Procera::WorkflowBuilder::Command;
 
 extends 'Procera::Compiler::AST::Node::IO';
 
@@ -23,7 +23,7 @@ sub BUILD {
 sub dag {
     my $self = shift;
 
-    return Genome::WorkflowBuilder::Command->create(
+    return Procera::WorkflowBuilder::Command->new(
         name => $self->alias,
         command => $self->source_path,
         parallel_by => $self->parallel,

@@ -5,6 +5,7 @@ use warnings FATAL => 'all';
 use Memoize qw();
 
 use Carp qw(confess);
+use Procera::WorkflowBuilder::Converge;
 
 extends "Procera::Compiler::AST::Node";
 
@@ -37,7 +38,7 @@ sub next_input {
 sub dag {
     my $self = shift;
 
-    return Genome::WorkflowBuilder::Converge->create(
+    return Procera::WorkflowBuilder::Converge->new(
         name => sprintf("Converge to %s", $self->target_name),
     );
 }
