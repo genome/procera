@@ -9,6 +9,7 @@ requires "Moose";
 requires "Params::Validate";
 requires "Readonly";
 requires "Set::Scalar";
+requires "Text::CSV";
 requires "URI::URL";
 requires "XML::LibXML";
 
