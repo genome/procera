@@ -4,11 +4,14 @@ use Moose::Role;
 use warnings FATAL => 'all';
 
 use Procera::WorkflowBuilder::Detail::TypeMap;
+use IO::File qw();
 use IO::Scalar qw();
 use Set::Scalar qw();
 use XML::LibXML qw();
 use Carp qw(confess);
 use Data::Dumper qw();
+
+use autodie qw(:io);
 
 has name => (
     is => 'ro',
@@ -90,7 +93,7 @@ sub from_xml_file {
 sub from_xml_filename {
     my ($class, $filename) = @_;
 
-    my $fh = Procera::Sys->open_file_for_reading($filename);
+    my $fh = IO::File->new($filename, 'r');
     return $class->from_xml_file($fh);
 }
 
