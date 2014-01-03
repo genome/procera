@@ -6,6 +6,7 @@ requires "IO::Scalar";
 requires "JSON";
 requires "Log::Log4perl";
 requires "Moose";
+requires "MooseX::Getopt";
 requires "Params::Validate";
 requires "Readonly";
 requires "Set::Scalar";
