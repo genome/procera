@@ -14,7 +14,7 @@ use Data::Dumper qw();
 use autodie qw(:io);
 
 has name => (
-    is => 'ro',
+    is => 'rw',
     isa => 'Str',
     required => 1,
 );
@@ -25,7 +25,7 @@ has log_dir => (
 );
 
 has parallel_by => (
-    is => 'ro',
+    is => 'rw',
     isa => 'Maybe[Str]',
 );
 
