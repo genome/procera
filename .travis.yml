@@ -1,3 +1,6 @@
 language: perl
 
-script: prove -lvr -I t t
+before_install:
+    - git submodule update --init vendor/ur vendor/workflow
+
+script: prove -lvr -I t -I vendor/ur/lib -I vendor/workflow/lib t

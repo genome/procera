@@ -18,3 +18,16 @@ requires "XML::Tidy";
 on 'test' => sub {
   requires "Test::Exception";
 };
+
+# UR dependencies
+requires 'Class::AutoloadCAN';
+requires 'Class::Autouse';
+requires 'Clone::PP';
+requires 'DBI';
+requires 'Data::UUID';
+requires 'Date::Format';
+requires 'FreezeThaw';
+requires 'Lingua::EN::Inflect';
+
+# Workflow dependencies
+requires 'Date::Pcalc';
