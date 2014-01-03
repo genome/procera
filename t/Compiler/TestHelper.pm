@@ -9,7 +9,7 @@ use File::Spec qw();
 use File::Temp qw();
 use File::Basename qw();
 
-use Genome::Utility::Test qw(compare_ok);
+use File::Compare qw();
 
 use Procera::Compiler;
 
@@ -71,13 +71,8 @@ sub diff_directories {
         ok(-e $expected_path, "found expected file: $expected_path") or next;
         ok(-e $actual_path, "found actual file: $actual_path") or next;
 
-        compare_ok(
-            $expected_path,
-            $actual_path,
+        ok(!File::Compare::compare($expected_path, $actual_path),
             sprintf('%s compares ok', $filename),
-            filters => [
-                qr(STEP_LABEL_[^\t]*),
-            ],
         ) or print `diff -u $expected $actual_path` . "\n";
 
     }

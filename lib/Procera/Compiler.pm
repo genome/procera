@@ -13,6 +13,7 @@ use File::Spec qw();
 use File::Path qw();
 
 use IO::File qw();
+use XML::Tidy qw();
 use Procera::InputFile;
 
 
@@ -95,7 +96,10 @@ sub output_path {
 sub format_xml {
     my ($self, $filename) = @_;
 
-    system sprintf("xmltidy %s", $self->output_path($filename));
+    my $tidy_obj = XML::Tidy->new(filename => $self->output_path($filename));
+    $tidy_obj->tidy;
+    $tidy_obj->write;
+
     return;
 }
 
