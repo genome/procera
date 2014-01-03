@@ -7,6 +7,7 @@ requires "JSON";
 requires "Log::Log4perl";
 requires "Moose";
 requires "Params::Validate";
+requires "Readonly";
 requires "URI::URL";
 requires "XML::LibXML";
 
