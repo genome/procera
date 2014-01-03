@@ -3,7 +3,7 @@ use Moose;
 use warnings FATAL => 'all';
 
 use UR;
-use Genome::WorkflowBuilder::DAG;
+use Procera::WorkflowBuilder::DAG;
 
 use Carp qw(confess);
 use File::Spec qw();
@@ -52,7 +52,7 @@ sub execute {
 
     my $inputs_file = $self->inputs_file($process);
 
-    my $dag = Genome::WorkflowBuilder::DAG->from_xml_filename($self->workflow);
+    my $dag = Procera::WorkflowBuilder::DAG->from_xml_filename($self->workflow);
     $dag->name(_workflow_name($process));
     $dag->log_dir($process_log_directory);
 
