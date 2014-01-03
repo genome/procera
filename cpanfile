@@ -8,6 +8,7 @@ requires "Log::Log4perl";
 requires "Moose";
 requires "Params::Validate";
 requires "Readonly";
+requires "Set::Scalar";
 requires "URI::URL";
 requires "XML::LibXML";
 
