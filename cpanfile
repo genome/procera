@@ -12,6 +12,7 @@ requires "Set::Scalar";
 requires "Text::CSV";
 requires "URI::URL";
 requires "XML::LibXML";
+requires "XML::Tidy";
 
 on 'test' => sub {
   requires "Test::Exception";
