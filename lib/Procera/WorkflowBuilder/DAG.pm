@@ -28,7 +28,7 @@ has links => (
 
 has log_dir => (
     is => 'rw',
-    isa => 'Str',
+    isa => 'Maybe[Str]',
 );
 
 
