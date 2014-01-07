@@ -1,3 +1,8 @@
 language: perl
 
-script: prove -lvr -I t t
+before_install:
+    - sudo apt-get update -qq
+    - sudo apt-get install -qq graphviz
+    - git submodule update --init vendor/ur vendor/workflow
+
+script: prove -lvr -I vendor/ur/lib -I vendor/workflow/lib -I t t
