@@ -1,6 +1,0 @@
-[submodule "UR"]
-	path = UR
-	url = https://github.com/genome/UR.git
-[submodule "tgi-workflow"]
-	path = tgi-workflow
-	url = https://github.com/genome/tgi-workflow.git
