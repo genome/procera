@@ -15,15 +15,15 @@ requires "URI::URL";
 requires "XML::LibXML";
 requires "XML::Tidy";
 
-requires "Class::AutoloadCAN"
-requires "Clone::PP"
-requires "Lingua::EN::Inflect"
-requires "Date::Pcalc"
-requires "Guard"
-requires "IPC::Run"
-requires "File::lockf"
-requires "GraphViz"
-requires "Net::Statsd"
+requires "Class::AutoloadCAN";
+requires "Clone::PP";
+requires "Lingua::EN::Inflect";
+requires "Date::Pcalc";
+requires "Guard";
+requires "IPC::Run";
+requires "File::lockf";
+requires "GraphViz";
+requires "Net::Statsd";
 
 on 'test' => sub {
   requires "Test::Exception";
