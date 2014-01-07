@@ -21,7 +21,6 @@ requires "Lingua::EN::Inflect";
 requires "Date::Pcalc";
 requires "Guard";
 requires "IPC::Run";
-requires "File::lockf";
 requires "GraphViz";
 requires "Net::Statsd";
 
