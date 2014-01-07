@@ -1,3 +1,7 @@
 language: perl
 
+before_install:
+    - sudo apt-get update -qq
+    - sudo apt-get install -qq graphviz
+
 script: prove -lvr -I t t
