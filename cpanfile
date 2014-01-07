@@ -24,6 +24,9 @@ requires "Guard";
 requires "IPC::Run";
 requires "GraphViz";
 requires "Net::Statsd";
+requires "Date::Format";
+requires "DBI";
+requires "FreezeThaw";
 
 on 'test' => sub {
   requires "Test::Exception";
