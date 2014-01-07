@@ -15,6 +15,7 @@ requires "URI::URL";
 requires "XML::LibXML";
 requires "XML::Tidy";
 
+requires "Class::Autouse";
 requires "Class::AutoloadCAN";
 requires "Clone::PP";
 requires "Lingua::EN::Inflect";
