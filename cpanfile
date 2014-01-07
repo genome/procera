@@ -27,6 +27,7 @@ requires "Net::Statsd";
 requires "Date::Format";
 requires "DBI";
 requires "FreezeThaw";
+requires "XML::Simple";
 
 on 'test' => sub {
   requires "Test::Exception";
