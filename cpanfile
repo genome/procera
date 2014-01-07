@@ -25,9 +25,10 @@ requires "IPC::Run";
 requires "GraphViz";
 requires "Net::Statsd";
 requires "Date::Format";
-requires "DBI";
 requires "FreezeThaw";
 requires "XML::Simple";
+requires "DBI";
+requires "DBD::SQLite";
 
 on 'test' => sub {
   requires "Test::Exception";
