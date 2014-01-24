@@ -29,6 +29,7 @@ requires "FreezeThaw";
 requires "XML::Simple";
 requires "DBI";
 requires "DBD::SQLite";
+requires "Cwd";
 
 on 'test' => sub {
   requires "Test::Exception";
