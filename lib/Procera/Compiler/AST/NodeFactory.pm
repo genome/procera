@@ -11,9 +11,7 @@ use Procera::Compiler::Parser;
 use Procera::Compiler::AST::Node::IO::Process;
 use Procera::Compiler::AST::Node::IO::Tool;
 
-use Readonly qw();
-
-Readonly::Scalar my $EXTENSION => '.gms';
+my $EXTENSION => '.gms';
 
 
 $::RD_HINT = 1;
