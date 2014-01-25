@@ -53,6 +53,8 @@ sub create_fileset {
 
         push @files, \%full_file_data;
         my $file_label = $self->_get_label('files');
+        $full_file_data{resource_uri} = $file_label;
+
         $self->_files->{$file_label} = \%full_file_data;
     }
 
