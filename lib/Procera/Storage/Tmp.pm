@@ -1,6 +1,6 @@
 package Procera::Storage::Tmp;
 
-use Moose;
+use MooseX::Singleton;
 use warnings FATAL => 'all';
 
 with 'Procera::Storage::Detail::Role';
@@ -11,6 +11,7 @@ use File::Copy qw();
 use File::Path qw();
 use File::Spec qw();
 use File::Temp qw();
+use POSIX qw();
 
 
 has _allocations => (
@@ -35,14 +36,14 @@ sub save_files {
         unless (-f $file) {
             Carp::confess(sprintf("'%s' is not a file.", $file));
         }
-        my $file_size = ceil((-s $file) / 1024);
+        my $file_size = POSIX::ceil((-s $file) / 1024);
         $total_size += $file_size;
     }
 
     my $allocation = $self->create_allocation($total_size);
 
     for my $file (@_) {
-        _move($file, File::Spec->join($allocation->{absolute_path}, $file));
+        _copy($file, File::Spec->join($allocation->{absolute_path}, $file));
     }
 
     return $allocation->{id};
@@ -59,11 +60,11 @@ sub create_allocation {
     return { id => $id, absolute_path => $absolute_path };
 }
 
-sub _move {
+sub _copy {
     my ($source, $destination) = @_;
 
     _make_path_to($destination);
-    File::Copy::mv($source, $destination);
+    File::Copy::cp($source, $destination);
 
     return;
 }

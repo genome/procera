@@ -7,6 +7,7 @@ requires "JSON";
 requires "Log::Log4perl";
 requires "Moose";
 requires "MooseX::Getopt";
+requires "MooseX::Singleton";
 requires "Params::Validate";
 requires "Readonly";
 requires "Set::Scalar";
@@ -30,6 +31,7 @@ requires "XML::Simple";
 requires "DBI";
 requires "DBD::SQLite";
 requires "Cwd";
+requires "File::lockf";
 
 on 'test' => sub {
   requires "Test::Exception";
