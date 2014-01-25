@@ -11,6 +11,7 @@ use File::Copy qw();
 use File::Path qw();
 use File::Spec qw();
 use File::Temp qw();
+use POSIX qw();
 
 
 has _allocations => (
@@ -35,7 +36,7 @@ sub save_files {
         unless (-f $file) {
             Carp::confess(sprintf("'%s' is not a file.", $file));
         }
-        my $file_size = ceil((-s $file) / 1024);
+        my $file_size = POSIX::ceil((-s $file) / 1024);
         $total_size += $file_size;
     }
 
