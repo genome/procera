@@ -1,6 +1,6 @@
 package Procera::Storage::Tmp;
 
-use Moose;
+use MooseX::Singleton;
 use warnings FATAL => 'all';
 
 with 'Procera::Storage::Detail::Role';

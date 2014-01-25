@@ -1,6 +1,6 @@
 package Procera::Persistence::Memory;
 
-use Moose;
+use MooseX::Singleton;
 use warnings FATAL => 'all';
 
 with 'Procera::Persistence::Detail::Role';
