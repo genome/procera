@@ -31,6 +31,7 @@ requires "XML::Simple";
 requires "DBI";
 requires "DBD::SQLite";
 requires "Cwd";
+requires "File::lockf";
 
 on 'test' => sub {
   requires "Test::Exception";
