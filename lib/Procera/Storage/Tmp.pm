@@ -43,7 +43,7 @@ sub save_files {
     my $allocation = $self->create_allocation($total_size);
 
     for my $file (@_) {
-        _move($file, File::Spec->join($allocation->{absolute_path}, $file));
+        _copy($file, File::Spec->join($allocation->{absolute_path}, $file));
     }
 
     return $allocation->{id};
@@ -60,11 +60,11 @@ sub create_allocation {
     return { id => $id, absolute_path => $absolute_path };
 }
 
-sub _move {
+sub _copy {
     my ($source, $destination) = @_;
 
     _make_path_to($destination);
-    File::Copy::mv($source, $destination);
+    File::Copy::cp($source, $destination);
 
     return;
 }
