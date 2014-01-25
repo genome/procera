@@ -17,6 +17,8 @@ has storage => (
 sub resolve_scalar_or_url {
     my ($self, $scalar_or_url) = @_;
 
+    return unless defined($scalar_or_url);
+
     if ($scalar_or_url =~ m/^\/v\d+\/.+/) {
         my @url_parts = split /\//, $scalar_or_url;
 

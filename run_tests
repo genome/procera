@@ -1,4 +1,3 @@
 #! /bin/bash
 
-source env.sh
-PERL5LIB=t:$PERL5LIB prove -r -v t $@
+prove -vrl -I t -I vendor/ur/lib -I vendor/workflow/lib $@
