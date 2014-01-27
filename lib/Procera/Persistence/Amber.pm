@@ -23,6 +23,12 @@ sub create_process {
     return $self->_get_created_url($post_response);
 }
 
+sub get_process {
+    my ($self, $path) = @_;
+
+    return $self->_get_or_die($path);
+}
+
 sub create_result {
     my ($self, $content) = @_;
     my $post_response = $self->_post('/v1/results/', $content);
