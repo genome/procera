@@ -124,10 +124,10 @@ sub _get {
 sub _full_url {
     my ($self, $path) = @_;
 
-    return URI::URL->new($path, $self->_base_url)->abs;
+    return URI::URL->new($path, $self->base_url)->abs;
 }
 
-sub _base_url {
+sub base_url {
     my $self = shift;
 
     return $ENV{AMBER_URL}
