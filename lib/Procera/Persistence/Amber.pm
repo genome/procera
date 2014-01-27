@@ -23,6 +23,12 @@ sub create_process {
     return $self->_get_created_url($post_response);
 }
 
+sub get_process {
+    my ($self, $path) = @_;
+
+    return $self->_get_or_die($path);
+}
+
 sub create_result {
     my ($self, $content) = @_;
     my $post_response = $self->_post('/v1/results/', $content);
@@ -118,10 +124,10 @@ sub _get {
 sub _full_url {
     my ($self, $path) = @_;
 
-    return URI::URL->new($path, $self->_base_url)->abs;
+    return URI::URL->new($path, $self->base_url)->abs;
 }
 
-sub _base_url {
+sub base_url {
     my $self = shift;
 
     return $ENV{AMBER_URL}
