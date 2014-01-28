@@ -8,6 +8,7 @@ use Procera::WorkflowBuilder::DAG;
 use Carp qw(confess);
 use File::Spec qw();
 use IO::File qw();
+use Data::UUID qw();
 use Procera::InputFile;
 use Procera::Factory::Persistence;
 use Procera::Factory::Storage;
@@ -41,8 +42,10 @@ sub execute {
     my $process_log_directory = File::Spec->join(
         $allocation->{absolute_path}, 'logs');
 
+    my $workflow_name = generate_workflow_name();
     my $process = $self->_persistence->create_process({
         allocation_id => $allocation->{id},
+        workflow_name => $workflow_name,
         steps => [],
         created_results => [],
     });
@@ -53,7 +56,7 @@ sub execute {
     my $inputs_file = $self->inputs_file($process);
 
     my $dag = Procera::WorkflowBuilder::DAG->from_xml_filename($self->workflow);
-    $dag->name(_workflow_name($process));
+    $dag->name($workflow_name);
     $dag->log_dir($process_log_directory);
 
     _save_workflow($dag, $allocation->{absolute_path});
@@ -61,6 +64,11 @@ sub execute {
 
     UR::Context->commit;
     return $dag->execute($inputs_file->as_hash);
+}
+
+sub generate_workflow_name {
+    my $uuid = Data::UUID->new->create_hex;
+    return "Procera Process $uuid";
 }
 
 sub _create_allocation {
@@ -74,12 +82,6 @@ sub _persistence {
     my $self = shift;
 
     return Procera::Factory::Persistence::create($self->_persistence_type);
-}
-
-sub _workflow_name {
-    my $process = shift;
-
-    return sprintf("Process %s", $process);
 }
 
 sub _save_workflow {
