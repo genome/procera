@@ -29,7 +29,7 @@ requires "Date::Format";
 requires "FreezeThaw";
 requires "XML::Simple";
 requires "DBI";
-requires "DBD::SQLite";
+requires "DBD::SQLite", '==1.29';
 requires "Cwd";
 requires "File::lockf";
 
