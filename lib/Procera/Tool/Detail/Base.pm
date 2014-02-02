@@ -242,7 +242,13 @@ sub _symlink_inputs {
 
     for my $input ($self->_inputs_with_locations) {
         my $name = $input->name;
-        _symlink_into_workspace($self->$name, $input->location);
+        if (-e $self->$name) {
+            _symlink_into_workspace($self->$name, $input->location);
+        } else {
+            Carp::confess(sprintf("Could not symlink input (%s) into workspace"
+                    . " because source (%s) does not exist.",
+                    $name, $self->$name));
+        }
     }
 
     return;
