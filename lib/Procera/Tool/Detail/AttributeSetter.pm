@@ -3,7 +3,9 @@ use Moose qw();
 use warnings FATAL => 'all';
 
 use Moose::Exporter qw();
-
+use Carp qw(confess);
+use Set::Scalar;
+use Class::Inspector;
 
 use Procera::Tool::Detail::Input;
 use Procera::Tool::Detail::Output;
@@ -14,6 +16,7 @@ sub has_input {
     my $meta = shift;
     my $name = shift;
 
+    validate($name);
     Moose::has($meta, $name, is => 'rw', traits => ['Input'],
         required => 1, @_);
 }
@@ -22,6 +25,7 @@ sub has_output {
     my $meta = shift;
     my $name = shift;
 
+    validate($name);
     Moose::has($meta, $name, is => 'rw', traits => ['Output'], @_);
 }
 
@@ -29,6 +33,7 @@ sub has_param {
     my $meta = shift;
     my $name = shift;
 
+    validate($name);
     Moose::has($meta, $name, is => 'rw', traits => ['Param'],
         required => 1, @_);
 }
@@ -62,6 +67,17 @@ Moose::Exporter->setup_import_methods(
                      has_output has_outputs
                      has_param has_params)],
 );
+
+my @RESERVED_NAMES = Class::Inspector->methods('Procera::Tool::Detail::Base');
+my $RESERVED_NAMES_SET = Set::Scalar->new(@RESERVED_NAMES);
+
+sub validate {
+    my $name = shift;
+    if ($RESERVED_NAMES_SET->contains($name)) {
+        confess "The name ($name) is reserved, choose another name";
+    }
+}
+
 
 
 1;
