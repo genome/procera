@@ -16,6 +16,7 @@ requires "URI::URL";
 requires "XML::LibXML";
 requires "XML::Tidy";
 requires "Test::Deep";
+requires "Class::Inspector";
 
 requires "Class::Autouse";
 requires "Class::AutoloadCAN";
