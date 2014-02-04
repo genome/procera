@@ -61,6 +61,22 @@ sub create_from_process_node {
     return $self;
 }
 
+sub create_from_hashref {
+    my ($class, $hashref) = @_;
+
+    my @entries;
+    for my $name (keys %{$hashref}) {
+        push @entries, Procera::InputFile::Entry->new(
+            name => $name,
+            value => $hashref->{$name},
+        );
+    }
+
+    my $self = $class->new(entries => \@entries);
+
+    return $self;
+}
+
 sub write_to_filename {
     my ($self, $filename) = @_;
 
