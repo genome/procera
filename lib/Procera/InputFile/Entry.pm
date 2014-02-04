@@ -30,7 +30,7 @@ sub assert_has_value {
     return;
 }
 
-my $_CSV = Text::CSV->new({binary => 1, sep_char => "\t"});
+my $_CSV = Text::CSV->new({binary => 1, sep_char => "\t", auto_diag => 1});
 sub write {
     my ($self, $file_handle) = @_;
 
@@ -67,7 +67,7 @@ sub create_from_line {
     my ($class, $line) = @_;
 
     unless ($_CSV->parse($line)) {
-        confess sprintf("Failed to parse line: %s", $line);
+        confess sprintf("Failed to parse line (%s)", $line);
     }
     my @columns = $_CSV->fields;
 
