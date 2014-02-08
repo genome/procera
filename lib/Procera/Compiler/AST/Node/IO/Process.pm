@@ -48,6 +48,10 @@ sub BUILD {
     return;
 }
 
+sub is_tool {
+    return 0;
+}
+
 sub set_step_labels {
     my $self = shift;
 
