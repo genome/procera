@@ -68,11 +68,7 @@ sub _path_to_tool {
 
 sub type {
     my $self = shift;
-    if ($self->ast_node->is_tool) {
-        return 'Tool';
-    } else {
-        return 'Process';
-    }
+    return $self->ast_node->type;
 }
 
 sub inputs {

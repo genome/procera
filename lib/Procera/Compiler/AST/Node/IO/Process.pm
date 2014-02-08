@@ -52,6 +52,10 @@ sub is_tool {
     return 0;
 }
 
+sub type {
+    return 'Process';
+}
+
 sub set_step_labels {
     my $self = shift;
 
