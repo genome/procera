@@ -17,6 +17,7 @@ requires "XML::LibXML";
 requires "XML::Tidy";
 requires "Test::Deep";
 requires "Class::Inspector";
+requires "Data::Dump";
 
 requires "Class::Autouse";
 requires "Class::AutoloadCAN";
