@@ -1,0 +1,6 @@
+Inputs:
+["another_renamed_input", "renamed_input"]
+Params:
+{ "SimpleTool.another_param" => undef, "SimpleTool.some_param" => 1 }
+Outputs:
+["renamed_output"]

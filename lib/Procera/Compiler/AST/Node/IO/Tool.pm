@@ -20,6 +20,14 @@ sub BUILD {
     return;
 }
 
+sub is_tool {
+    return 1;
+}
+
+sub type {
+    return 'Tool';
+}
+
 sub dag {
     my $self = shift;
 

@@ -1,0 +1,6 @@
+Inputs:
+["another_input", "some_input"]
+Params:
+{ another_param => undef, some_param => undef }
+Outputs:
+["another_output", "some_output"]
