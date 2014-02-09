@@ -5,6 +5,7 @@ use warnings FATAL => 'all';
 use Carp qw(confess);
 use File::Spec qw();
 use Procera::Compiler::AST::NodeFactory;
+use Procera::SourceFile qw(preexisting_file_path);
 use Memoize qw();
 
 has 'source_path' => (
@@ -40,7 +41,7 @@ Memoize::memoize('ast_node');
 sub actual_path {
     my $self = shift;
 
-    my $path = $self->_path_to_gms;
+    my $path = $self->_path_to_definition_file;
     unless (defined($path)) {
         $path = $self->_path_to_tool;
         unless (defined($path)) {
@@ -52,11 +53,9 @@ sub actual_path {
     return $path;
 }
 
-sub _path_to_gms {
+sub _path_to_definition_file {
     my $self = shift;
-    my $path = Procera::Compiler::AST::NodeFactory::resolve_path(
-        $self->source_path);
-    return $path;
+    return preexisting_file_path($self->source_path);
 }
 
 sub _path_to_tool {

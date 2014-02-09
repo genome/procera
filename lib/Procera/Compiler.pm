@@ -68,7 +68,8 @@ sub default_output_directory {
     my $self = shift;
 
     my $path = $self->input_file;
-    $path =~ s/\.gms$//;
+    my $extension = $Procera::SourceFile::EXTENSION;
+    $path =~ s/$extension$//;
     return $path . '/';
 }
 

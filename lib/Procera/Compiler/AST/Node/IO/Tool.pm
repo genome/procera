@@ -6,13 +6,14 @@ use warnings FATAL => 'all';
 use Carp qw(confess);
 use Memoize;
 use Procera::WorkflowBuilder::Command;
+use Procera::SourceFile qw(use_source_path);
 
 extends 'Procera::Compiler::AST::Node::IO';
 
 sub BUILD {
     my $self = shift;
 
-    _use_source_path($self->source_path);
+    use_source_path($self->source_path);
     $self->_set_inputs;
     $self->_set_outputs;
     $self->_set_params;
@@ -38,16 +39,6 @@ sub dag {
     );
 }
 Memoize::memoize('dag');
-
-sub _use_source_path {
-    my $source_path = shift;
-
-    eval "use $source_path";
-    if ($@) {
-        confess sprintf("Couldn't use tool '%s': %s", $source_path, $@);
-    }
-    return;
-}
 
 sub _set_inputs {
     my $self = shift;

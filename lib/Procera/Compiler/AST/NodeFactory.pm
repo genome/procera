@@ -3,16 +3,13 @@ package Procera::Compiler::AST::NodeFactory;
 use strict;
 use warnings FATAL => 'all';
 
-
 use Carp qw(confess);
 use File::Spec qw();
 
 use Procera::Compiler::Parser;
 use Procera::Compiler::AST::Node::IO::Process;
 use Procera::Compiler::AST::Node::IO::Tool;
-
-my $EXTENSION = '.gms';
-
+use Procera::SourceFile qw(preexisting_file_path);
 
 $::RD_HINT = 1;
 
@@ -24,7 +21,7 @@ sub new_node {
         source_path => 1,
     });
 
-    my $definition_path = resolve_path($params{source_path});
+    my $definition_path = preexisting_file_path($params{source_path});
     if ($definition_path) {
         my $process = Procera::Compiler::Parser::new_process($definition_path, $params{source_path});
         $process->alias($params{alias}) if defined $params{alias};
@@ -34,28 +31,6 @@ sub new_node {
     } else {
         return Procera::Compiler::AST::Node::IO::Tool->new(%params);
     }
-}
-
-sub resolve_path {
-    my $name = shift;
-    my $relative_path = $name . $EXTENSION;
-
-    for my $base_path (search_path()) {
-        my $absolute_path = File::Spec->rel2abs(File::Spec->join(
-                $base_path, split(/::/, $relative_path)));
-        if (-f $absolute_path) {
-            return $absolute_path;
-        }
-    }
-
-    return;
-}
-
-sub search_path {
-    if ($ENV{GMSPATH}) {
-        return split(/:/, $ENV{GMSPATH});
-    }
-    return 'definitions';
 }
 
 1;
