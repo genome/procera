@@ -30,6 +30,12 @@ has 'inputs' => (
     required => 1,
 );
 
+has 'process_name' => (
+    is => 'ro',
+    isa => 'Str',
+    predicate => 'has_process_name',
+);
+
 
 sub execute {
     my $self = shift;
@@ -42,7 +48,7 @@ sub execute {
     my $process_log_directory = File::Spec->join(
         $allocation->{absolute_path}, 'logs');
 
-    my $workflow_name = generate_workflow_name();
+    my $workflow_name = $self->generate_workflow_name();
     my $process = $self->_persistence->create_process({
         allocation_id => $allocation->{id},
         workflow_name => $workflow_name,
@@ -67,8 +73,16 @@ sub execute {
 }
 
 sub generate_workflow_name {
-    my $uuid = Data::UUID->new->create_hex;
-    return "Procera Process $uuid";
+    my $self = shift;
+    my $uuid = Data::UUID->new->create_b64;
+
+    my $prefix;
+    if ($self->has_process_name) {
+        $prefix = $self->process_name;
+    } else {
+        $prefix = "Procera Process";
+    }
+    return "$prefix ($uuid)";
 }
 
 sub _create_allocation {

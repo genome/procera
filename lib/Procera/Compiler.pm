@@ -31,6 +31,17 @@ has 'output-directory' => (
     reader => 'output_directory',
 );
 
+has workflow_file => (
+    is => 'rw',
+    isa => 'Str',
+    traits => ['NoGetopt'],
+);
+has inputs_file => (
+    is => 'rw',
+    isa => 'Str',
+    traits => ['NoGetopt'],
+);
+
 sub execute {
     my $self = shift;
 
@@ -44,6 +55,9 @@ sub execute {
 
     $self->save_data('workflow.xml', $root_process->dag->get_xml);
     $self->format_xml('workflow.xml');
+
+    $self->workflow_file($self->output_path('workflow.xml'));
+    $self->inputs_file($self->output_path('inputs.tsv'));
 
     return 1;
 }
