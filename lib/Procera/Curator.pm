@@ -61,7 +61,9 @@ sub _path_to_gms {
 
 sub _path_to_tool {
     my $self = shift;
-    my $pm = File::Spec->join(split(/::/, $self->source_path)) . '.pm';
+    my $source_path = $self->source_path;
+    eval "use $source_path";
+    my $pm = File::Spec->join(split(/::/, $source_path)) . '.pm';
     my $path = $INC{$pm};
     return $path;
 }
