@@ -12,6 +12,7 @@ use Carp qw(confess);
 use Test::More;
 
 use Procera::Curator;
+use TestHelper qw(diff_files);
 
 my $SOURCE_PATH = 'Subject';
 
@@ -52,29 +53,6 @@ sub write_report {
         pp($curator->outputs);
     $output_fh->close();
     return $output_filename;
-}
-
-sub diff_files {
-    my ($got, $expected, $statement) = @_;
-
-    my $got_text = File::Slurp::read_file($got);
-    my $expected_text = File::Slurp::read_file($expected);
-    is_deeply($got_text, $expected_text, $statement);
-
-    update_test_data($got, $expected);
-}
-
-sub update_test_data {
-    my ($got, $expected) = @_;
-
-    if ($ENV{UPDATE_TEST_DATA}) {
-        my $result = File::Copy::copy($got, $expected);
-        if ($result) {
-            print "Copied file ($got) to ($expected)\n";
-        } else {
-            confess "failed to copy file ($got) to ($expected)";
-        }
-    }
 }
 
 1;
