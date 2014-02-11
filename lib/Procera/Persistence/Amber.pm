@@ -29,6 +29,13 @@ sub get_process {
     return $self->_get_or_die($path);
 }
 
+sub get_process_steps {
+    my ($self, $process_id) = @_;
+
+    my $path = "/v1/process-steps/?process=$process_id";
+    return $self->_get_or_die($path)->{objects};
+}
+
 sub create_result {
     my ($self, $content) = @_;
     my $post_response = $self->_post('/v1/results/', $content);
