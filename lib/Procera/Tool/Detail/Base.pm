@@ -81,6 +81,14 @@ sub outputs {
 }
 Memoize::memoize('outputs');
 
+sub saved_outputs {
+    my $class = shift;
+
+    return map {$_->name} grep {$_->does('Output') && $_->save}
+        $class->meta->get_all_attributes;
+}
+Memoize::memoize('saved_outputs');
+
 sub params {
     my $class = shift;
 
@@ -318,7 +326,7 @@ sub _save {
     $self->_verify_outputs_in_workspace;
 
     my $allocation_id = $self->_storage->save_files(
-        map {$self->$_} $self->_saved_file_names);
+        map {$self->$_} $self->saved_outputs);
     my $fileset = $self->_create_fileset_for_outputs($allocation_id);
     $self->_set_output_uris($fileset);
     $self->_create_result;
@@ -343,7 +351,7 @@ sub _output_file_hashes {
     my $self = shift;
 
     my @result;
-    for my $output_name ($self->_saved_file_names) {
+    for my $output_name ($self->saved_outputs) {
         push @result, $self->_output_file_hash($output_name);
     }
 
@@ -434,14 +442,6 @@ sub _get_outputs {
     }
 
     return \%result;
-}
-
-
-sub _saved_file_names {
-    my $class = shift;
-
-    return map {$_->name} grep {$_->does('Output') && $_->save}
-        $class->meta->get_all_attributes;
 }
 
 
