@@ -89,6 +89,12 @@ sub params {
 }
 Memoize::memoize('params');
 
+sub non_contextual_params {
+    my $class = shift;
+    return map {$_->name} grep {$_->does('Param') && !$_->does('Contextual')}
+        $class->meta->get_all_attributes;
+}
+Memoize::memoize('non_contextual_params');
 
 sub shortcut {
     my $self = shift;
@@ -137,16 +143,8 @@ sub _inputs_as_hashref {
 sub _non_contextual_input_names {
     my $self = shift;
 
-    return $self->inputs, $self->_non_contextual_params;
+    return $self->inputs, $self->non_contextual_params;
 }
-
-sub _non_contextual_params {
-    my $self = shift;
-    return map {$_->name} grep {$_->does('Param') && !$_->does('Contextual')}
-        $self->meta->get_all_attributes;
-}
-Memoize::memoize('_non_contextual_params');
-
 
 sub _property_names {
     my $self = shift;

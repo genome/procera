@@ -102,7 +102,7 @@ sub _fill_params {
     my ($self, $node, $prefix) = @_;
 
     if ($node->is_tool) {
-        for my $param_name ($node->source_path->_non_contextual_params) {
+        for my $param_name ($node->source_path->non_contextual_params) {
             my $full_param_name = $prefix ? "$prefix.$param_name" : $param_name;
             $self->_params->{$full_param_name} = $node->constants->{$param_name};
         }
