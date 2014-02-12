@@ -382,37 +382,30 @@ sub _create_fileset_for_outputs {
 
     return $self->_persistence->create_fileset(
         {
-            files => [$self->_output_file_hashes],
+            files => [$self->_file_info],
             allocations => [{allocation_id => $allocation_id}],
         }
     );
 }
 
-sub _output_file_hashes {
+sub _file_info {
     my $self = shift;
 
     my @result;
-    for my $output_name ($self->saved_outputs) {
-        push @result, $self->_output_file_hash($output_name);
+    for my $filename ($self->saved_outputs) {
+        push @result, $self->_file_info_element($filename);
     }
 
     return @result;
 }
 
-sub _output_file_hash {
-    my ($self, $output_name) = @_;
-
-    my $path = $self->$output_name;
-    unless (-f $path) {
-        Carp::confess(sprintf("Path (%s) contained in output '%s' on tool "
-                . "'%s' is not a valid file.",
-                $path, $output_name, ref $self));
-    }
+sub _file_info_element {
+    my ($self, $filename) = @_;
 
     return {
-        path => $path,
-        size => -s $path,
-        md5 => _md5sum($path),
+        path => $filename,
+        size => -s $filename,
+        md5 => _md5sum($filename),
     };
 }
 
