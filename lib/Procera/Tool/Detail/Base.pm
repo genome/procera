@@ -12,6 +12,7 @@ use Log::Log4perl qw();
 use Memoize qw();
 use Procera::Tool::Detail::AttributeSetter;
 use Procera::Tool::Detail::Contextual;
+use Params::Validate qw(validate_pos);
 
 with 'Procera::WorkflowCompatibility::Role';
 
@@ -103,6 +104,22 @@ sub non_contextual_params {
         $class->meta->get_all_attributes;
 }
 Memoize::memoize('non_contextual_params');
+
+sub is_array {
+    my ($class, $name) = validate_pos(@_, 1, 1);
+
+    my $attribute = $class->meta->find_attribute_by_name($name);
+    unless ($attribute) {
+        confess sprintf("Tool (%s) doesn't have an attribute named (%s)",
+            ref $class, $name);
+    }
+    if ($attribute->array) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 
 sub shortcut {
     my $self = shift;
@@ -323,7 +340,7 @@ sub _cleanup {
 sub _save {
     my $self = shift;
 
-    $self->_verify_outputs_in_workspace;
+    $self->_verify_saved_outputs_in_workspace;
 
     my $allocation_id = $self->_storage->save_files(
         map {$self->$_} $self->saved_outputs);
@@ -334,7 +351,31 @@ sub _save {
     return;
 };
 
-sub _verify_outputs_in_workspace { }
+sub _saved_file_names {
+    my $self = shift;
+
+    my @result;
+    for my $output_name ($self->saved_outputs) {
+        if ($self->is_array($output_name)) {
+            push @result, @{$self->$output_name};
+        } else {
+            push @result, $self->$output_name;
+        }
+    }
+    return @result;
+}
+
+sub _verify_saved_outputs_in_workspace {
+    my $self = shift;
+
+    for my $filename ($self->_saved_file_names) {
+        unless (-f $filename) {
+            Carp::confess(sprintf("Tool (%s) has an output that is set to be"
+                    . " saved but is not a file (%s)",
+                    ref $self, $filename));
+        }
+    }
+}
 
 sub _create_fileset_for_outputs {
     my ($self, $allocation_id) = @_;
