@@ -12,6 +12,7 @@ use Log::Log4perl qw();
 use Memoize qw();
 use Procera::Tool::Detail::AttributeSetter;
 use Procera::Tool::Detail::Contextual;
+use Params::Validate qw(validate_pos);
 
 with 'Procera::WorkflowCompatibility::Role';
 
@@ -81,6 +82,14 @@ sub outputs {
 }
 Memoize::memoize('outputs');
 
+sub saved_outputs {
+    my $class = shift;
+
+    return map {$_->name} grep {$_->does('Output') && $_->save}
+        $class->meta->get_all_attributes;
+}
+Memoize::memoize('saved_outputs');
+
 sub params {
     my $class = shift;
 
@@ -88,6 +97,36 @@ sub params {
         $class->meta->get_all_attributes;
 }
 Memoize::memoize('params');
+
+sub non_contextual_params {
+    my $class = shift;
+    return map {$_->name} grep {$_->does('Param') && !$_->does('Contextual')}
+        $class->meta->get_all_attributes;
+}
+Memoize::memoize('non_contextual_params');
+
+sub non_contextual_inputs {
+    my $class = shift;
+
+    return $class->inputs, $class->non_contextual_params;
+}
+Memoize::memoize('non_contextual_inputs');
+
+
+sub is_array {
+    my ($class, $name) = validate_pos(@_, 1, 1);
+
+    my $attribute = $class->meta->find_attribute_by_name($name);
+    unless ($attribute) {
+        confess sprintf("Tool (%s) doesn't have an attribute named (%s)",
+            ref $class, $name);
+    }
+    if ($attribute->array) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 
 sub shortcut {
@@ -127,26 +166,12 @@ sub _inputs_as_hashref {
     my $self = shift;
 
     my %inputs;
-    for my $input_name ($self->_non_contextual_input_names) {
+    for my $input_name ($self->non_contextual_inputs) {
         $inputs{$input_name} = $self->$input_name;
     }
 
     return \%inputs;
 }
-
-sub _non_contextual_input_names {
-    my $self = shift;
-
-    return $self->inputs, $self->_non_contextual_params;
-}
-
-sub _non_contextual_params {
-    my $self = shift;
-    return map {$_->name} grep {$_->does('Param') && !$_->does('Contextual')}
-        $self->meta->get_all_attributes;
-}
-Memoize::memoize('_non_contextual_params');
-
 
 sub _property_names {
     my $self = shift;
@@ -173,6 +198,14 @@ sub _translate_inputs {
         storage => $self->_storage,
     );
     for my $input_name (@_) {
+        if ($self->is_array($input_name)) {
+            $self->$input_name(
+                [map {$translator->resolve_scalar_or_url($_)} @{$self->$input_name}]
+            );
+        } else {
+            $self->$input_name($translator->resolve_scalar_or_url(
+                    $self->$input_name));
+        }
         $self->$input_name($translator->resolve_scalar_or_url(
                 $self->$input_name));
     }
@@ -317,10 +350,9 @@ sub _cleanup {
 sub _save {
     my $self = shift;
 
-    $self->_verify_outputs_in_workspace;
+    $self->_verify_saved_outputs_in_workspace;
 
-    my $allocation_id = $self->_storage->save_files(
-        map {$self->$_} $self->_saved_file_names);
+    my $allocation_id = $self->_storage->save_files($self->_saved_file_names);
     my $fileset = $self->_create_fileset_for_outputs($allocation_id);
     $self->_set_output_uris($fileset);
     $self->_create_result;
@@ -328,44 +360,61 @@ sub _save {
     return;
 };
 
-sub _verify_outputs_in_workspace { }
+sub _saved_file_names {
+    my $self = shift;
+
+    my @result;
+    for my $output_name ($self->saved_outputs) {
+        if ($self->is_array($output_name)) {
+            push @result, @{$self->$output_name};
+        } else {
+            push @result, $self->$output_name;
+        }
+    }
+    return @result;
+}
+
+sub _verify_saved_outputs_in_workspace {
+    my $self = shift;
+
+    for my $filename ($self->_saved_file_names) {
+        unless (-f $filename) {
+            Carp::confess(sprintf("Tool (%s) has an output that is set to be"
+                    . " saved but is not a file (%s)",
+                    ref $self, $filename));
+        }
+    }
+}
 
 sub _create_fileset_for_outputs {
     my ($self, $allocation_id) = @_;
 
     return $self->_persistence->create_fileset(
         {
-            files => [$self->_output_file_hashes],
+            files => [$self->_file_info],
             allocations => [{allocation_id => $allocation_id}],
         }
     );
 }
 
-sub _output_file_hashes {
+sub _file_info {
     my $self = shift;
 
     my @result;
-    for my $output_name ($self->_saved_file_names) {
-        push @result, $self->_output_file_hash($output_name);
+    for my $filename ($self->_saved_file_names) {
+        push @result, $self->_file_info_element($filename);
     }
 
     return @result;
 }
 
-sub _output_file_hash {
-    my ($self, $output_name) = @_;
-
-    my $path = $self->$output_name;
-    unless (-f $path) {
-        Carp::confess(sprintf("Path (%s) contained in output '%s' on tool "
-                . "'%s' is not a valid file.",
-                $path, $output_name, ref $self));
-    }
+sub _file_info_element {
+    my ($self, $filename) = @_;
 
     return {
-        path => $path,
-        size => -s $path,
-        md5 => _md5sum($path),
+        path => $filename,
+        size => -s $filename,
+        md5 => _md5sum($filename),
     };
 }
 
@@ -387,24 +436,28 @@ sub _storage {
 sub _set_output_uris {
     my ($self, $fileset) = @_;
 
-    my $path_to_name_map = $self->_get_output_path_to_name_map;
-    for my $file (@{$fileset->{files}}) {
-        my $output_name = $path_to_name_map->{$file->{path}};
-        $self->$output_name($file->{resource_uri});
+    my %uri_map = $self->_get_uri_map($fileset);
+    for my $output_name ($self->saved_outputs) {
+        if ($self->is_array($output_name)) {
+            $self->$output_name([
+                map {$uri_map{$_}} @{$self->$output_name}
+            ]);
+        } else {
+            $self->$output_name($uri_map{$self->$output_name});
+        }
     }
 
     return;
 }
 
-sub _get_output_path_to_name_map {
-    my $self = shift;
+sub _get_uri_map {
+    my ($self, $fileset) = validate_pos(@_, 1, 1);
 
     my %result;
-    for my $output_name ($self->outputs) {
-        $result{$self->$output_name} = $output_name;
+    for my $file (@{$fileset->{files}}) {
+        $result{$file->{path}} = $file->{resource_uri};
     }
-
-    return \%result;
+    return %result;
 }
 
 sub _create_result {
@@ -436,14 +489,6 @@ sub _get_outputs {
     }
 
     return \%result;
-}
-
-
-sub _saved_file_names {
-    my $class = shift;
-
-    return map {$_->name} grep {$_->does('Output') && $_->save}
-        $class->meta->get_all_attributes;
 }
 
 
