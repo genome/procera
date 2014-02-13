@@ -198,6 +198,14 @@ sub _translate_inputs {
         storage => $self->_storage,
     );
     for my $input_name (@_) {
+        if ($self->is_array($input_name)) {
+            $self->$input_name(
+                [map {$translator->resolve_scalar_or_url($_)} @{$self->$input_name}]
+            );
+        } else {
+            $self->$input_name($translator->resolve_scalar_or_url(
+                    $self->$input_name));
+        }
         $self->$input_name($translator->resolve_scalar_or_url(
                 $self->$input_name));
     }
@@ -344,8 +352,7 @@ sub _save {
 
     $self->_verify_saved_outputs_in_workspace;
 
-    my $allocation_id = $self->_storage->save_files(
-        map {$self->$_} $self->saved_outputs);
+    my $allocation_id = $self->_storage->save_files($self->_saved_file_names);
     my $fileset = $self->_create_fileset_for_outputs($allocation_id);
     $self->_set_output_uris($fileset);
     $self->_create_result;
@@ -394,7 +401,7 @@ sub _file_info {
     my $self = shift;
 
     my @result;
-    for my $filename ($self->saved_outputs) {
+    for my $filename ($self->_saved_file_names) {
         push @result, $self->_file_info_element($filename);
     }
 
@@ -429,24 +436,28 @@ sub _storage {
 sub _set_output_uris {
     my ($self, $fileset) = @_;
 
-    my $path_to_name_map = $self->_get_output_path_to_name_map;
-    for my $file (@{$fileset->{files}}) {
-        my $output_name = $path_to_name_map->{$file->{path}};
-        $self->$output_name($file->{resource_uri});
+    my %uri_map = $self->_get_uri_map($fileset);
+    for my $output_name ($self->saved_outputs) {
+        if ($self->is_array($output_name)) {
+            $self->$output_name([
+                map {$uri_map{$_}} @{$self->$output_name}
+            ]);
+        } else {
+            $self->$output_name($uri_map{$self->$output_name});
+        }
     }
 
     return;
 }
 
-sub _get_output_path_to_name_map {
-    my $self = shift;
+sub _get_uri_map {
+    my ($self, $fileset) = validate_pos(@_, 1, 1);
 
     my %result;
-    for my $output_name ($self->outputs) {
-        $result{$self->$output_name} = $output_name;
+    for my $file (@{$fileset->{files}}) {
+        $result{$file->{path}} = $file->{resource_uri};
     }
-
-    return \%result;
+    return %result;
 }
 
 sub _create_result {
