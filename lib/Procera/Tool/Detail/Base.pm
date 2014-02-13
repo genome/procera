@@ -105,6 +105,14 @@ sub non_contextual_params {
 }
 Memoize::memoize('non_contextual_params');
 
+sub non_contextual_inputs {
+    my $class = shift;
+
+    return $class->inputs, $class->non_contextual_params;
+}
+Memoize::memoize('non_contextual_inputs');
+
+
 sub is_array {
     my ($class, $name) = validate_pos(@_, 1, 1);
 
@@ -158,17 +166,11 @@ sub _inputs_as_hashref {
     my $self = shift;
 
     my %inputs;
-    for my $input_name ($self->_non_contextual_input_names) {
+    for my $input_name ($self->non_contextual_inputs) {
         $inputs{$input_name} = $self->$input_name;
     }
 
     return \%inputs;
-}
-
-sub _non_contextual_input_names {
-    my $self = shift;
-
-    return $self->inputs, $self->non_contextual_params;
 }
 
 sub _property_names {
