@@ -33,6 +33,7 @@ requires "FreezeThaw";
 requires "XML::Simple";
 requires "DBI";
 requires "DBD::SQLite", '==1.29';
+requires "Module::Runtime", ">=0.014";
 requires "Cwd";
 requires "File::lockf";
 
