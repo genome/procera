@@ -71,7 +71,7 @@ sub execute {
     unless (defined($result)) {
         die sprintf(
             "Workflow failed with these errors: %s",
-            Data::Dumper::Dumper(map {$_->error} @Workflow::Simple::ERROR)
+            Data::Dumper::Dumper(map {$_->error || 'Unknown error'} @Workflow::Simple::ERROR)
         );
     }
     return $result;
