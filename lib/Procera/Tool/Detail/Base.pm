@@ -132,17 +132,19 @@ sub is_array {
 sub shortcut {
     my $self = shift;
 
-    $logger->info("Attempting to shortcut ", ref $self,
-        " with test name (", $self->test_name, ")");
+    $logger->info("Process uri (", $self->_process, ")");
+    $logger->info("Attempting to shortcut (", ref $self,
+        ") with test name (", $self->test_name, ")");
 
     my $result = $self->_persistence->get_result(
         inputs => $self->_inputs_as_hashref,
         tool_name => ref $self, test_name => $self->test_name);
 
     if ($result) {
-        $logger->info("Found matching result ", $result->{resource_uri});
+        $logger->info("Found matching result (", $result->{resource_uri}, ")");
         $self->_set_outputs_from_result($result);
 
+        $logger->info("Adding process-step (", $self->_step_label, ")");
         $self->_persistence->add_step_to_process(
             label => $self->_step_label,
             process => $self->_process,
@@ -217,8 +219,11 @@ sub _translate_inputs {
 sub execute {
     my $self = shift;
 
+    $logger->info("Process uri (", $self->_process, ")");
+    $logger->info("Executing (", ref $self, ") with test name (",
+            $self->test_name, ")");
+
     $self->_setup;
-    $logger->info("Process uri: ", $self->_process);
 
     eval {
         $self->execute_tool;
@@ -258,6 +263,8 @@ sub _setup_workspace {
     $self->_workspace_path(File::Temp::tempdir(CLEANUP => 1));
     $self->_original_working_directory(Cwd::cwd());
     chdir $self->_workspace_path;
+
+    $logger->info("Setup workspace at (", $self->_workspace_path, ")");
 
     return;
 }
@@ -312,6 +319,8 @@ sub _symlink_into_workspace {
                 . "Relative path required.", $relative_dest_path));
     }
 
+    $logger->info("Symlinking (", $source_path, ") into the workspace as (",
+            $relative_dest_path, ")");
     _make_path($relative_dest_path);
     symlink $source_path, $relative_dest_path;
 
@@ -466,6 +475,8 @@ sub _get_uri_map {
 sub _create_result {
     my $self = shift;
 
+    $logger->info("Creating result and adding process-step (",
+            $self->_step_label, ")");
     my $result = $self->_persistence->create_result({
         tool_name => ref $self,
         test_name => $self->test_name,
