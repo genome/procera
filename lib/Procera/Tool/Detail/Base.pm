@@ -352,9 +352,12 @@ sub _save {
 
     $self->_verify_saved_outputs_in_workspace;
 
-    my $allocation_id = $self->_storage->save_files($self->_saved_file_names);
-    my $fileset = $self->_create_fileset_for_outputs($allocation_id);
-    $self->_set_output_uris($fileset);
+    if ($self->_saved_file_names) {
+        my $allocation_id = $self->_storage->save_files($self->_saved_file_names);
+        my $fileset = $self->_create_fileset_for_outputs($allocation_id);
+        $self->_set_output_uris($fileset);
+    }
+
     $self->_create_result;
 
     return;
