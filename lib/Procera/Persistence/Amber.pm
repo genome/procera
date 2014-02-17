@@ -4,17 +4,32 @@ use Moose;
 use warnings FATAL => 'all';
 
 with 'Procera::Persistence::Detail::Role';
+with 'Procera::Persistence::Detail::Restful';
 
 use Data::Dumper qw();
-use JSON qw();
-use LWP::UserAgent qw();
-use Params::Validate qw();
+use Params::Validate qw(validate_pos);
 use URI::URL qw();
+use Procera::Persistence::Detail::AmberIterator;
 
 
-my $_json_codec = JSON->new;
-my $_user_agent = LWP::UserAgent->new;
+sub base_url {
+    my $self = shift;
 
+    return $ENV{AMBER_URL}
+        or Carp::confess("Environment variable AMBER_URL not set");
+}
+
+sub get_process_steps_iterator {
+    my ($self, $process_id) = validate_pos(@_, 1, 1);
+
+    my $uri = "/v1/process-steps/?process=$process_id";
+    return $self->get_objects_iterator($uri);
+}
+
+sub get_objects_iterator {
+    my ($self, $uri) = validate_pos(@_, 1, 1);
+    return Procera::Persistence::Detail::AmberIterator->new(uri => $uri);
+}
 
 sub create_process {
     my ($self, $content) = @_;
@@ -115,43 +130,6 @@ sub get_allocation_id_for_file {
     return $self->get_allocation_id_for_fileset($file->{fileset});
 }
 
-sub _get_or_die {
-    my ($self, $path) = @_;
-    return $self->_decode_response($self->_get($path));
-}
-
-sub _get {
-    my ($self, $path) = @_;
-
-    return $_user_agent->get($self->_full_url($path),
-        'Accepts' => 'application/json',
-        'Content-Type' => 'application/json');
-}
-
-sub _full_url {
-    my ($self, $path) = @_;
-
-    return URI::URL->new($path, $self->base_url)->abs;
-}
-
-sub base_url {
-    my $self = shift;
-
-    return $ENV{AMBER_URL}
-        or Carp::confess("Environment variable AMBER_URL not set");
-}
-
-
-sub _post {
-    my ($self, $path, $data) = @_;
-    my $response = $_user_agent->post($self->_full_url($path),
-        'Accepts' => 'application/json',
-        'Content-Type' => 'application/json',
-        Content => $_json_codec->encode($data));
-
-    return $response;
-}
-
 sub _get_created_resource {
     my ($self, $post_response) = @_;
     if ($post_response->is_success) {
@@ -172,18 +150,6 @@ sub _get_created_url {
     } else {
         Carp::confess(sprintf("Failed to create resource: %s",
                 Data::Dumper::Dumper($post_response)));
-    }
-}
-
-sub _decode_response {
-    my ($self, $response) = @_;
-
-    if ($response->is_success) {
-        return $_json_codec->decode(
-            $response->decoded_content(raise_error => 1));
-    } else {
-        Carp::confess(sprintf("Can't extract content from failed response: %s",
-                Data::Dumper::Dumper($response)));
     }
 }
 
