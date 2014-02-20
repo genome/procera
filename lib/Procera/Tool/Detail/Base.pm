@@ -484,6 +484,7 @@ sub _create_result {
         inputs => $self->_raw_inputs,
         outputs => $self->_get_outputs,
     });
+    $logger->info("Created result (", $result, ")");
 
     $self->_persistence->add_step_to_process(
         label => $self->_step_label,
