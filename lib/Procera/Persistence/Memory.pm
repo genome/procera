@@ -32,6 +32,15 @@ sub create_process {
     return $self->_get_label('processes');
 }
 
+sub update_process {
+    my $self = shift;
+    my %params = Params::Validate::validate(@_, {
+        process_uri => { type => Params::Validate::SCALAR, required => 1, },
+        content => { type => Params::Validate::HASHREF, required => 1, },
+    });
+    return;
+}
+
 sub create_result {
     my $self = shift;
 

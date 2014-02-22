@@ -54,4 +54,14 @@ sub _post {
     return $response;
 }
 
+sub _put {
+    my ($self, $path, $data) = @_;
+    my $response = $_user_agent->put($self->_full_url($path),
+        'Accepts' => 'application/json',
+        'Content-Type' => 'application/json',
+        Content => $_json_codec->encode($data));
+
+    return $response;
+}
+
 1;

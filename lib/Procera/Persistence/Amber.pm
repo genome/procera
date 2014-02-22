@@ -38,6 +38,22 @@ sub create_process {
     return $self->_get_created_url($post_response);
 }
 
+sub update_process {
+    my $self = shift;
+    my %params = Params::Validate::validate(@_, {
+        process_uri => { type => Params::Validate::SCALAR, required => 1, },
+        content => { type => Params::Validate::HASHREF, required => 1, },
+    });
+    my $post_response = $self->_put($params{process_uri}, $params{content});
+
+    if ($post_response->is_success) {
+        return;
+    } else {
+        Carp::confess(sprintf("Failed to update resource: %s",
+                Data::Dumper::Dumper($post_response)));
+    }
+}
+
 sub register_tool {
     my $self = shift;
     my %params = Params::Validate::validate(@_, {
