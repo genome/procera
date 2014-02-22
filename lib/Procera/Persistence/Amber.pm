@@ -115,12 +115,7 @@ sub get_allocation_id_for_fileset {
     my ($self, $fileset_uri) = @_;
 
     my $fileset = $self->_get_or_die($fileset_uri);
-    if (@{$fileset->{allocations}}) {
-        return $fileset->{allocations}->[0];
-    } else {
-        Carp::confess(sprintf("No allocations associated with fileset '%s'",
-                $fileset->{resource_uri}));
-    }
+    return $fileset->{allocation_id};
 }
 
 sub get_allocation_id_for_file {

@@ -404,7 +404,7 @@ sub _create_fileset_for_outputs {
     return $self->_persistence->create_fileset(
         {
             files => [$self->_file_info],
-            allocations => [{allocation_id => $allocation_id}],
+            allocation_id => $allocation_id,
         }
     );
 }

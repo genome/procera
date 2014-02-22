@@ -81,7 +81,7 @@ sub get_copy_path {
 
     return File::Spec->join(
         Genome::Disk::Allocation->get(
-            $allocation->{allocation_id})->absolute_path, $path);
+            $allocation)->absolute_path, $path);
 }
 
 

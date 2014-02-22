@@ -46,7 +46,7 @@ sub create_fileset {
     my ($self, $content) = validate_pos(@_, 1, 1);
 
     my $fileset_label = $self->_get_label('filesets');
-    $self->_allocations->{$fileset_label} = $content->{allocations}->[0];
+    $self->_allocations->{$fileset_label} = $content->{allocation_id};
 
     my @files;
     for my $file_data (@{$content->{files}}) {
