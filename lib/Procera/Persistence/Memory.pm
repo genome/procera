@@ -38,6 +38,15 @@ sub create_result {
     return $self->_get_label('results');
 }
 
+sub register_tool {
+    my $self = shift;
+    my %params = Params::Validate::validate(@_, {
+        source_path => { type => Params::Validate::SCALAR, required => 1, },
+        version => { type => Params::Validate::SCALAR, required => 1, },
+    });
+    return;
+}
+
 sub get_result {
     return undef;
 }

@@ -38,6 +38,18 @@ sub create_process {
     return $self->_get_created_url($post_response);
 }
 
+sub register_tool {
+    my $self = shift;
+    my %params = Params::Validate::validate(@_, {
+        source_path => { type => Params::Validate::SCALAR, required => 1, },
+        version => { type => Params::Validate::SCALAR, required => 1, },
+    });
+
+    my $response = $self->_post('/v1/register-tool/', \%params);
+    my $tool_data = $self->_decode_response($response);
+    return $self->_get_or_die($tool_data->{objects}->[0]);
+}
+
 sub get_process {
     my ($self, $path) = @_;
 
@@ -74,7 +86,8 @@ sub _checkpoint {
     my $self = shift;
     my %params = Params::Validate::validate(@_, {
         inputs => { type => Params::Validate::HASHREF, required => 1, },
-        tool_name => { type => Params::Validate::SCALAR, required => 1, },
+        source_path => { type => Params::Validate::SCALAR, required => 1, },
+        version => { type => Params::Validate::SCALAR, required => 1, },
         test_name => { type => Params::Validate::SCALAR, required => 1, },
     });
 
