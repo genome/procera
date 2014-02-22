@@ -2,7 +2,6 @@ package Procera::Runner;
 use Moose;
 use warnings FATAL => 'all';
 
-use UR;
 use Procera::WorkflowBuilder::DAG;
 
 use Carp qw(confess);
@@ -68,7 +67,6 @@ sub execute {
     _save_workflow($dag, $allocation->{absolute_path});
     _save_inputs($inputs_file, $allocation->{absolute_path});
 
-    UR::Context->commit;
     return $dag->execute($inputs_file->as_hash);
 }
 
