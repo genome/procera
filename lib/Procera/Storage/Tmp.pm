@@ -79,10 +79,10 @@ sub _make_path_to {
 }
 
 sub get_copy_path {
-    my ($self, $allocation, $path) = @_;
+    my ($self, $allocation_id, $path) = @_;
 
     return File::Spec->join($self->_base_path->dirname,
-            $allocation->{allocation_id}, $path);
+            $allocation_id, $path);
 }
 
 
