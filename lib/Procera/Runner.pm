@@ -2,7 +2,6 @@ package Procera::Runner;
 use Moose;
 use warnings FATAL => 'all';
 
-use UR;
 use Procera::WorkflowBuilder::DAG;
 
 use Carp qw(confess);
@@ -49,17 +48,20 @@ sub execute {
         $allocation->{absolute_path}, 'logs');
 
     my $workflow_name = $self->generate_workflow_name();
-    my $process = $self->_persistence->create_process({
+    my $username = getpwuid( $< );
+    my $process_content = {
+        username => $username,
         allocation_id => $allocation->{id},
         workflow_name => $workflow_name,
-        steps => [],
-        created_results => [],
-    });
+        source_path => $self->process_name,
+        status => 'running',
+    };
+    my $process_uri = $self->_persistence->create_process($process_content);
 
-    $logger->info('Launching Process ', $process,
+    $logger->info('Launching Process ', $process_uri,
         ' (', $process_log_directory, ')');
 
-    my $inputs_file = $self->inputs_file($process);
+    my $inputs_file = $self->inputs_file($process_uri);
 
     my $dag = Procera::WorkflowBuilder::DAG->from_xml_filename($self->workflow);
     $dag->name($workflow_name);
@@ -68,8 +70,17 @@ sub execute {
     _save_workflow($dag, $allocation->{absolute_path});
     _save_inputs($inputs_file, $allocation->{absolute_path});
 
-    UR::Context->commit;
-    return $dag->execute($inputs_file->as_hash);
+    my $outputs = eval{$dag->execute($inputs_file->as_hash)};
+    if ($@) {
+        $process_content->{status} = 'crashed';
+    } else {
+        $process_content->{status} = 'succeeded';
+    }
+    $self->_persistence->update_process(
+        process_uri => $process_uri,
+        content => $process_content,
+    );
+    return $outputs;
 }
 
 sub generate_workflow_name {

@@ -32,10 +32,28 @@ sub create_process {
     return $self->_get_label('processes');
 }
 
+sub update_process {
+    my $self = shift;
+    my %params = Params::Validate::validate(@_, {
+        process_uri => { type => Params::Validate::SCALAR, required => 1, },
+        content => { type => Params::Validate::HASHREF, required => 1, },
+    });
+    return;
+}
+
 sub create_result {
     my $self = shift;
 
     return $self->_get_label('results');
+}
+
+sub register_tool {
+    my $self = shift;
+    my %params = Params::Validate::validate(@_, {
+        source_path => { type => Params::Validate::SCALAR, required => 1, },
+        version => { type => Params::Validate::SCALAR, required => 1, },
+    });
+    return;
 }
 
 sub get_result {
@@ -46,7 +64,7 @@ sub create_fileset {
     my ($self, $content) = validate_pos(@_, 1, 1);
 
     my $fileset_label = $self->_get_label('filesets');
-    $self->_allocations->{$fileset_label} = $content->{allocations}->[0];
+    $self->_allocations->{$fileset_label} = $content->{allocation_id};
 
     my @files;
     for my $file_data (@{$content->{files}}) {

@@ -38,6 +38,34 @@ sub create_process {
     return $self->_get_created_url($post_response);
 }
 
+sub update_process {
+    my $self = shift;
+    my %params = Params::Validate::validate(@_, {
+        process_uri => { type => Params::Validate::SCALAR, required => 1, },
+        content => { type => Params::Validate::HASHREF, required => 1, },
+    });
+    my $post_response = $self->_put($params{process_uri}, $params{content});
+
+    if ($post_response->is_success) {
+        return;
+    } else {
+        Carp::confess(sprintf("Failed to update resource: %s",
+                Data::Dumper::Dumper($post_response)));
+    }
+}
+
+sub register_tool {
+    my $self = shift;
+    my %params = Params::Validate::validate(@_, {
+        source_path => { type => Params::Validate::SCALAR, required => 1, },
+        version => { type => Params::Validate::SCALAR, required => 1, },
+    });
+
+    my $response = $self->_post('/v1/register-tool/', \%params);
+    my $tool_data = $self->_decode_response($response);
+    return $self->_get_or_die($tool_data->{objects}->[0]);
+}
+
 sub get_process {
     my ($self, $path) = @_;
 
@@ -74,7 +102,8 @@ sub _checkpoint {
     my $self = shift;
     my %params = Params::Validate::validate(@_, {
         inputs => { type => Params::Validate::HASHREF, required => 1, },
-        tool_name => { type => Params::Validate::SCALAR, required => 1, },
+        source_path => { type => Params::Validate::SCALAR, required => 1, },
+        version => { type => Params::Validate::SCALAR, required => 1, },
         test_name => { type => Params::Validate::SCALAR, required => 1, },
     });
 
@@ -115,12 +144,7 @@ sub get_allocation_id_for_fileset {
     my ($self, $fileset_uri) = @_;
 
     my $fileset = $self->_get_or_die($fileset_uri);
-    if (@{$fileset->{allocations}}) {
-        return $fileset->{allocations}->[0];
-    } else {
-        Carp::confess(sprintf("No allocations associated with fileset '%s'",
-                $fileset->{resource_uri}));
-    }
+    return $fileset->{allocation_id};
 }
 
 sub get_allocation_id_for_file {

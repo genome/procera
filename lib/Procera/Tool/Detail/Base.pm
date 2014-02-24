@@ -65,6 +65,9 @@ has _workspace_path => (
     isa => 'Str',
 );
 
+sub version {
+    return "0.0.1";
+}
 
 sub inputs {
     my $class = shift;
@@ -136,9 +139,17 @@ sub shortcut {
     $logger->info("Attempting to shortcut (", ref $self,
         ") with test name (", $self->test_name, ")");
 
+    my $tool = $self->_persistence->register_tool(
+        source_path => ref $self,
+        version => $self->version,
+    );
+
     my $result = $self->_persistence->get_result(
         inputs => $self->_inputs_as_hashref,
-        tool_name => ref $self, test_name => $self->test_name);
+        source_path => ref $self,
+        version => $self->version,
+        test_name => $self->test_name,
+    );
 
     if ($result) {
         $logger->info("Found matching result (", $result->{resource_uri}, ")");
@@ -404,7 +415,7 @@ sub _create_fileset_for_outputs {
     return $self->_persistence->create_fileset(
         {
             files => [$self->_file_info],
-            allocations => [{allocation_id => $allocation_id}],
+            allocation_id => $allocation_id,
         }
     );
 }
@@ -477,8 +488,14 @@ sub _create_result {
 
     $logger->info("Creating result and adding process-step (",
             $self->_step_label, ")");
+
+    my $tool = $self->_persistence->register_tool(
+        source_path => ref $self,
+        version => $self->version,
+    );
+
     my $result = $self->_persistence->create_result({
-        tool_name => ref $self,
+        tool => $tool,
         test_name => $self->test_name,
         creating_process => $self->_process,
         inputs => $self->_raw_inputs,
