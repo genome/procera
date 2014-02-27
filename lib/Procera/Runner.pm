@@ -72,6 +72,7 @@ sub execute {
 
     my $outputs = eval{$dag->execute($inputs_file->as_hash)};
     if ($@) {
+        $logger->error('Error with process: ', $@);
         $process_content->{status} = 'crashed';
     } else {
         $process_content->{status} = 'succeeded';
