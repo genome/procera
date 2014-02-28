@@ -69,10 +69,14 @@ sub execute {
     my $self = shift;
     my $result = Workflow::Simple::run_workflow_lsf($self->get_xml, @_);
     unless (defined($result)) {
-        die sprintf(
-            "Workflow failed with these errors: %s",
-            Data::Dumper::Dumper(map {$_->error || 'Unknown error'} @Workflow::Simple::ERROR)
-        );
+        if (@Workflow::Simple::ERROR) {
+            die sprintf(
+                "Workflow failed with these errors: %s",
+                Data::Dumper::Dumper(map {$_->error || 'Unknown error'} @Workflow::Simple::ERROR)
+            );
+        } else {
+            die "Workflow failed: reason unknown";
+        }
     }
     return $result;
 }
