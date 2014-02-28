@@ -71,8 +71,20 @@ sub execute {
     _save_inputs($inputs_file, $allocation->{absolute_path});
 
     my $outputs = eval{$dag->execute($inputs_file->as_hash)};
-    if ($@) {
-        $logger->error('Error with process: ', $@);
+    my $error = $@;
+    $self->update_status($error, $process_content, $process_uri);
+
+    if ($error) {
+        die "Error with process ($process_uri): $error";
+    } else {
+        return $outputs;
+    }
+}
+
+sub update_status {
+    my ($self, $error, $process_content, $process_uri) = @_;
+
+    if ($error) {
         $process_content->{status} = 'crashed';
     } else {
         $process_content->{status} = 'succeeded';
@@ -81,8 +93,9 @@ sub execute {
         process_uri => $process_uri,
         content => $process_content,
     );
-    return $outputs;
+    return;
 }
+
 
 sub generate_workflow_name {
     my $self = shift;
