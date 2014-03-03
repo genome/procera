@@ -72,6 +72,13 @@ sub get_process {
     return $self->_get_or_die($path);
 }
 
+sub get_processes_iterator {
+    my ($self, $uri) = validate_pos(@_, 1, 1);
+
+    return $self->get_objects_iterator($uri);
+}
+
+
 sub get_process_steps {
     my ($self, $process_id) = @_;
 
