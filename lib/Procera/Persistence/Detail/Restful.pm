@@ -11,7 +11,10 @@ use URI::URL qw();
 requires 'base_url';
 
 
-my @RETRY_DELAYS = (1, 5, 5, 5, 5, 5, 5, 10, 20, 40, 80, 160, 320);
+my @RETRY_DELAYS = (5, 5, 10, 20, 40, 80, 160);
+for (1..20) {
+    push @RETRY_DELAYS, 320;
+}
 
 my $_json_codec = JSON->new;
 my $_user_agent = _get_user_agent();
