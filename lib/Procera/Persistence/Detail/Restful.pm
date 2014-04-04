@@ -11,10 +11,12 @@ use URI::URL qw();
 requires 'base_url';
 
 
-my @RETRY_DELAYS = (5, 5, 10, 20, 40, 80, 160);
+my @RAW_DELAYS = (5, 5, 10, 20, 40, 80, 160);
 for (1..20) {
-    push @RETRY_DELAYS, 320;
+    push @RAW_DELAYS, 320;
 }
+# This will spread out the distribution of requests over time.
+my @RETRY_DELAYS = map {$_ + _random_int(4)} @RAW_DELAYS;
 
 my $_json_codec = JSON->new;
 my $_user_agent = _get_user_agent();
@@ -70,9 +72,14 @@ sub _put {
     return $response;
 }
 
+sub _random_int {
+    my $magnitude = shift;
+    my $int_mag = int($magnitude);
+    return int(rand(2*$int_mag+1)) - $int_mag;
+}
+
 sub _get_user_agent {
-    my $_random_delay = int(rand(5));
-    my $_timing = join(',', map {$_ + $_random_delay} @RETRY_DELAYS);
+    my $_timing = join(',', @RETRY_DELAYS);
 
     my $agent = LWP::UserAgent::Determined->new;
     $agent->timing($_timing);
