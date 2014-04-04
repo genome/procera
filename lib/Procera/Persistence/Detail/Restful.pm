@@ -65,8 +65,8 @@ sub _put {
     return $response;
 }
 
-my @WAIT_DELAYS = (1, 5, 5, 5, 5, 5, 5, 10, 20, 40, 80, 160, 320);
 sub _get_user_agent {
+    my @WAIT_DELAYS = (1, 5, 5, 5, 5, 5, 5, 10, 20, 40, 80, 160, 320);
     my $agent = LWP::UserAgent::Determined->new;
 
     my $_random_delay = int(rand(5));
