@@ -13,6 +13,8 @@ requires "Readonly";
 requires "Set::Scalar";
 requires "Text::CSV";
 requires "URI::URL";
+requires "LWP::UserAgent";
+requires "LWP::UserAgent::Determined";
 requires "XML::LibXML";
 requires "XML::Tidy";
 requires "Test::Deep";

@@ -5,13 +5,14 @@ use warnings FATAL => 'all';
 
 use Data::Dumper qw();
 use JSON qw();
-use LWP::UserAgent qw();
+use LWP::UserAgent::Determined qw();
 use URI::URL qw();
 
 requires 'base_url';
 
+
 my $_json_codec = JSON->new;
-my $_user_agent = LWP::UserAgent->new;
+my $_user_agent = _get_user_agent();
 
 sub _get_or_die {
     my ($self, $path) = @_;
@@ -63,5 +64,16 @@ sub _put {
 
     return $response;
 }
+
+sub _get_user_agent {
+    my @WAIT_DELAYS = (1, 5, 5, 5, 5, 5, 5, 10, 20, 40, 80, 160, 320);
+    my $agent = LWP::UserAgent::Determined->new;
+
+    my $_random_delay = int(rand(5));
+    my $_timing = join(',', map {$_ + $_random_delay} @WAIT_DELAYS);
+    $agent->timing($_timing);
+    return $agent;
+}
+
 
 1;
