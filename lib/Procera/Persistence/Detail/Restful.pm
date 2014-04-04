@@ -11,6 +11,8 @@ use URI::URL qw();
 requires 'base_url';
 
 
+my @RETRY_DELAYS = (1, 5, 5, 5, 5, 5, 5, 10, 20, 40, 80, 160, 320);
+
 my $_json_codec = JSON->new;
 my $_user_agent = _get_user_agent();
 
@@ -66,14 +68,13 @@ sub _put {
 }
 
 sub _get_user_agent {
-    my @WAIT_DELAYS = (1, 5, 5, 5, 5, 5, 5, 10, 20, 40, 80, 160, 320);
-    my $agent = LWP::UserAgent::Determined->new;
-
     my $_random_delay = int(rand(5));
-    my $_timing = join(',', map {$_ + $_random_delay} @WAIT_DELAYS);
+    my $_timing = join(',', map {$_ + $_random_delay} @RETRY_DELAYS);
+
+    my $agent = LWP::UserAgent::Determined->new;
     $agent->timing($_timing);
+
     return $agent;
 }
-
 
 1;
