@@ -7,8 +7,11 @@ use Data::Dumper qw();
 use JSON qw();
 use LWP::UserAgent::Determined qw();
 use URI::URL qw();
+use Log::Log4perl qw();
 
 requires 'base_url';
+
+my $logger = Log::Log4perl->get_logger();
 
 
 my @RAW_DELAYS = (5, 5, 10, 20, 40, 80, 160);
@@ -83,8 +86,21 @@ sub _get_user_agent {
 
     my $agent = LWP::UserAgent::Determined->new;
     $agent->timing($_timing);
+    $agent->after_determined_callback(\&__after_determined_callback);
 
     return $agent;
+}
+
+sub __after_determined_callback {
+    my ($user_agent, $timing, $pause, $codes_to_determinate, $args, $resp) = @_;
+
+    if(defined($codes_to_determinate->{$resp->code})) {
+        $logger->warn("Server responded to request (", $args->[0]->url, ") with code (",
+            $resp->code, ").");
+        if ($pause) {
+            $logger->warn("Retrying request in ", $pause, " seconds.");
+        }
+    }
 }
 
 1;
