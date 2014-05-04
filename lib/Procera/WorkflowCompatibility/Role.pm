@@ -7,14 +7,26 @@ use Procera::WorkflowCompatibility::FakeProperty::Output;
 use Procera::WorkflowCompatibility::FakeProperty::Param;
 use Procera::WorkflowCompatibility::FakePropertyHolder;
 use Sub::Install;
+use Data::Dump qw(pp);
 use Carp qw( confess );
 
 Sub::Install::reinstall_sub({
     into => 'Moose::Exception::ValidationFailedForTypeConstraint',
     as => 'error',
-    code => sub { my $self = shift; confess $self->message },
+    code => sub {
+        my $self = shift;
+        confess sprintf("MESSAGE: %s\nVALUE: %s", $self->message, pp($self->value));
+    },
 });
 
+Sub::Install::reinstall_sub({
+    into => 'Moose::Exception::ValidationFailedForInlineTypeConstraint',
+    as => 'error',
+    code => sub {
+        my $self = shift;
+        confess sprintf("MESSAGE: %s\nVALUE: %s", $self->message, pp($self->value));
+    },
+});
 
 sub __meta__ {
     my $class = shift;
