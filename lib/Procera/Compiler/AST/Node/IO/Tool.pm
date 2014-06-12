@@ -32,13 +32,28 @@ sub type {
 sub dag {
     my $self = shift;
 
-    return Procera::WorkflowBuilder::Command->new(
+    my $op = Procera::WorkflowBuilder::Command->new(
         name => $self->alias,
         command => $self->source_path,
         parallel_by => $self->parallel,
     );
+    if ($self->lsf_resource) {
+        $op->lsf_resource($self->lsf_resource);
+    }
+    return $op;
 }
 Memoize::memoize('dag');
+
+sub lsf_resource {
+    my $self = shift;
+
+    my $tool_class = $self->source_path;
+    if ($tool_class->can('lsf_resource')) {
+        return $tool_class->lsf_resource();
+    } else {
+        return;
+    }
+}
 
 sub _set_inputs {
     my $self = shift;

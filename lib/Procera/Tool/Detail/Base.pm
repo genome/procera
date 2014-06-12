@@ -65,6 +65,10 @@ has _workspace_path => (
     isa => 'Str',
 );
 
+sub lsf_resource {
+    return;
+}
+
 sub version {
     return "0.0.1";
 }
